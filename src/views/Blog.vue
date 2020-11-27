@@ -1,6 +1,7 @@
 <template>
   <div class="blog">
-    <h1>Webprojekt Fake News 3D</h1>
+    <div class="text">
+      <h1>Webprojekt Fake News 3D</h1>
     <p>
       Unsere künstlerische Website richtet sich an gesellschaftspolitisch interessierte Menschen, die mehr über Fake News und
       deren Hintergründe erfahren möchten. Die Website sensibilisiert und bietet eine visuell ansprechende 3D-Experience, in der
@@ -10,23 +11,34 @@
       Statt einer trockenen Fact-Checking Websites von dene es schon viele gibt, bietet unsere Seite eine interaktive und
       multimediale Experience.
     </p>
-    <br>
-    <img src="@/assets/escapingTheRabbitHole.jpg" alt="">
+    <br/>
+    <h2>Figma Moodboard</h2>
+   </div>
+    <iframe
+      style="border: 1px solid rgba(0, 0, 0, 0.1);"
+      width="1400"
+      height="1000"
+      src="https://www.figma.com/embed?embed_host=share&url=https%3A%2F%2Fwww.figma.com%2Ffile%2F5rtexo1EPpi6rWZcSVDR7x%2FWeb-Extended%3Fnode-id%3D0%253A1"
+      allowfullscreen
+    ></iframe>
+    <!-- <img src="@/assets/escapingTheRabbitHole.jpg" alt="" /> -->
   </div>
 </template>
 
-<script>
-
-</script>
+<script></script>
 
 <style lang="scss" scoped>
-.blog{
+.text {
   max-width: 600px;
   margin: 0 auto;
 
-  img{
+  img {
     max-width: 80%;
     margin: 0 auto;
   }
+}
+
+iframe {
+  margin: 0 auto;
 }
 </style>
