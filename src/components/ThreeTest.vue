@@ -3,11 +3,17 @@
   <video id="video" loop crossOrigin="anonymous" playsinline style="display:none">
     <source src="@/assets/sintel.mp4" type='video/mp4; codecs="avc1.42E01E, mp4a.40.2"' />
   </video>
+  <div id="plane">
+    <p>
+      <a href="https://qalerts.app/">FAKE NEWS</a>
+    </p>
+  </div>
 </template>
 
 <script>
 import * as THREE from "three";
 import { TrackballControls } from "three/examples/jsm/controls/TrackballControls.js";
+import { CSS3DRenderer, CSS3DObject } from "three/examples/jsm/renderers/CSS3DRenderer.js";
 import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass.js";
 import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer.js";
 import { UnrealBloomPass } from "three/examples/jsm/postprocessing/UnrealBloomPass.js";
@@ -17,15 +23,17 @@ export default {
   name: "ThreeTest",
   static() {
     return {
-      camera: null,
-      scene: null,
-      renderer: null,
-      composer: null,
-      controls: null,
-      videoMesh: null,
-      edgesMesh: null,
-      container: null,
-      lastTimestamp: null,
+      camera: {},
+      sceneGL: {},
+      rendererGL: {},
+      composerGL: {},
+      controls: {},
+      videoMesh: {},
+      edgesMesh: {},
+      container: {},
+      lastTimestamp: {},
+      sceneCSS: {},
+      rendererCSS: {},
     };
   },
   props: {},
@@ -39,35 +47,50 @@ export default {
       // Set up Scene
       this.createScene();
 
-      // Set up renderer
-      this.renderer = new THREE.WebGLRenderer({ antialias: true });
-      this.renderer.setSize(this.container.clientWidth, this.container.clientHeight);
-      this.container.appendChild(this.renderer.domElement);
+      // Set up CSS Renderer
+      this.rendererCSS = new CSS3DRenderer();
+      this.rendererCSS.setSize(this.container.clientWidth, this.container.clientHeight);
+      this.rendererCSS.domElement.style.position = "absolute";
+      this.rendererCSS.domElement.style.top = 0;
+
+      // Set up GL Renderer
+      this.rendererGL = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+      this.rendererGL.setClearColor(0x00ff00, 0.0);
+      this.rendererGL.setSize(this.container.clientWidth, this.container.clientHeight);
+      this.rendererGL.domElement.style.position = "absolute";
+      this.rendererGL.domElement.style.zIndex = 1;
+      this.rendererGL.domElement.style.top = 0;
+
+      // Add GL Renderer to CSS Renderer and append CSS Renderer to DOM
+      this.rendererCSS.domElement.appendChild(this.rendererGL.domElement);
+      this.container.appendChild(this.rendererCSS.domElement);
 
       // Set up post processing
-      this.composer = new EffectComposer(this.renderer);
-      this.composer.addPass(new RenderPass(this.scene, this.camera));
+      this.composerGL = new EffectComposer(this.rendererGL);
+      this.composerGL.addPass(new RenderPass(this.sceneGL, this.camera));
 
-      const bloomPass = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 1.5, 0.4, 0.85);
-      bloomPass.threshold = 0;
-      bloomPass.strength = 2;
-      bloomPass.radius = 0;
-      // this.composer.addPass(bloomPass);
+      // const bloomPass = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 1.5, 0.4, 0.85);
+      // bloomPass.threshold = 0;
+      // bloomPass.strength = 2;
+      // bloomPass.radius = 0;
+      // this.composerGL.addPass(bloomPass);
 
       //Resize Listener
       window.addEventListener("resize", this.onWindowResize, false);
 
       // Set up trackball controls
-      this.controls = new TrackballControls(this.camera, this.renderer.domElement);
-      this.controls.rotateSpeed = 4.0;
-      this.controls.zoomSpeed = 2.0;
-      this.controls.panSpeed = 4.0;
-      this.controls.keys = [65, 83, 68];
+      // this.controls = new TrackballControls(this.camera, this.rendererGL.domElement);
+      // this.controls.rotateSpeed = 4.0;
+      // this.controls.zoomSpeed = 2.0;
+      // this.controls.panSpeed = 4.0;
+      // this.controls.keys = [65, 83, 68];
     },
     createScene: function() {
-      this.scene = new THREE.Scene();
-      this.scene.background = new THREE.Color(0x000000);
-      this.scene.fog = new THREE.FogExp2(0x000000, 0.4);
+      this.sceneGL = new THREE.Scene();
+      // this.sceneGL.background = new THREE.Color(0x000000);
+      // this.sceneGL.fog = new THREE.FogExp2(0x000000, 0.4);
+
+      this.sceneCSS = new THREE.Scene();
 
       // Create inner Video Mesh
       const geometry = new THREE.SphereBufferGeometry(0.2, 4, 2);
@@ -77,14 +100,14 @@ export default {
       const material = new THREE.MeshBasicMaterial({ map: videoTexture });
       // const material = new THREE.MeshPhongMaterial({ color: 0xcccccc, flatShading: true });
       this.videoMesh = new THREE.Mesh(geometry, material);
-      this.videoMesh.rotation.y = -Math.PI/2;
-      this.scene.add(this.videoMesh);
+      this.videoMesh.rotation.y = -Math.PI / 2;
+      this.sceneGL.add(this.videoMesh);
 
       // // Create outer Edges Mesh
       // const edges = new THREE.EdgesGeometry(geometry);
       // this.edgesMesh = new THREE.LineSegments(edges, new THREE.LineBasicMaterial({ color: 0xffffff, linewidth: 1 }));
       // this.edgesMesh.scale.set(1.4, 1.4, 1.4);
-      // this.scene.add(this.edgesMesh);
+      // this.sceneGL.add(this.edgesMesh);
 
       // Create thick outer edges
       const edgeLine = new MeshLine();
@@ -100,15 +123,23 @@ export default {
         })
       );
       this.edgesMesh.scale.set(1.4, 1.4, 1.4);
-      this.scene.add(this.edgesMesh);
+      this.sceneGL.add(this.edgesMesh);
+
+      // CSS 3D Object
+      const button = document.getElementById("plane");
+      const object = new CSS3DObject(button);
+      object.position.set(0, 0, -0.3);
+      object.rotation.y = 0;
+      object.scale.set(0.001, 0.001, 0.001);
+      this.sceneCSS.add(object);
 
       // Add light so that we can see something
       const light1 = new THREE.PointLight(0xffffff, 1);
       light1.position.set(3, 1, 1);
-      this.scene.add(light1);
+      this.sceneGL.add(light1);
       const light2 = new THREE.PointLight(0xffffff, 0.3);
       light2.position.set(-3, 1, 1);
-      this.scene.add(light2);
+      this.sceneGL.add(light2);
     },
     animate: function(now) {
       requestAnimationFrame(this.animate);
@@ -123,15 +154,22 @@ export default {
       // this.edgesMesh.rotation.x = now * 0.0005;
       // this.edgesMesh.rotation.y = now * 0.0008;
 
-      this.controls.update();
-      this.composer.render();
-      // this.renderer.render(this.scene, this.camera);
+      // this.sceneGL.rotation.x = now * 0.0005;
+      this.sceneGL.rotation.y = now * 0.0008;
+      // this.sceneCSS.rotation.x = now * 0.0005;
+      this.sceneCSS.rotation.y = now * 0.0008;
+
+      // this.controls.update();
+      this.composerGL.render();
+      this.rendererCSS.render(this.sceneCSS, this.camera);
+      // this.rendererGL.render(this.sceneGL, this.camera);
     },
     onWindowResize: function() {
       this.camera.aspect = this.container.clientWidth / this.container.clientHeight;
       this.camera.updateProjectionMatrix();
-      this.renderer.setSize(this.container.clientWidth, this.container.clientHeight);
-      this.composer.setSize(this.container.clientWidth, this.container.clientHeight);
+      this.rendererGL.setSize(this.container.clientWidth, this.container.clientHeight);
+      this.composerGL.setSize(this.container.clientWidth, this.container.clientHeight);
+      this.rendererCSS.setSize(this.container.clientWidth, this.container.clientHeight);
     },
   },
   mounted() {
@@ -153,8 +191,25 @@ canvas {
 } */
 
 #canvas-wrapper {
+  
+  background-color: aqua;
   width: 100vw;
   height: 100vh;
-  background-color: aqua;
+
+  pointer-events: none;
+
+  canvas{
+    width: 100%;
+    height: 100%;
+  }
+}
+
+#plane {
+  background-color: darkorange;
+  width: 800px;
+  height: 800px;
+
+  font-size: 100px;
+  font-weight: bold;
 }
 </style>
