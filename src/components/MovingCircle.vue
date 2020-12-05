@@ -40,6 +40,8 @@ export default {
         z-index: 100;
 
         // transform-origin: -50% -50%;
-        transition: transform 2.0s cubic-bezier(.02,1.23,.79,1.08);
+        transition: transform 1.5s cubic-bezier(.02,1.23,.79,1.08);
+
+        pointer-events: none;
     }
 </style>
