@@ -215,7 +215,7 @@ canvas {
   text-align: center;
   text-transform: uppercase;
 
-  font-family: Arial;
+  font-family: Arial, Helvetica, sans-serif;
   // font-style: normal; 
 
   a{
