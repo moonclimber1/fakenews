@@ -5,7 +5,7 @@
   </video>
   <div id="plane">
     <p>
-      <a href="https://qalerts.app/">FAKE NEWS</a>
+      <a href="https://qalerts.app/">Why do you believe what you believe?</a>
     </p>
   </div>
 </template>
@@ -155,14 +155,13 @@ export default {
       // this.edgesMesh.rotation.y = now * 0.0008;
 
       // this.sceneGL.rotation.x = now * 0.0005;
-      this.sceneGL.rotation.y = now * 0.0008;
+      this.sceneGL.rotation.y = now * 0.0004;
       // this.sceneCSS.rotation.x = now * 0.0005;
-      this.sceneCSS.rotation.y = now * 0.0008;
+      this.sceneCSS.rotation.y = now * 0.0004;
 
       // this.controls.update();
       this.composerGL.render();
       this.rendererCSS.render(this.sceneCSS, this.camera);
-      // this.rendererGL.render(this.sceneGL, this.camera);
     },
     onWindowResize: function() {
       this.camera.aspect = this.container.clientWidth / this.container.clientHeight;
@@ -192,7 +191,7 @@ canvas {
 
 #canvas-wrapper {
   
-  background-color: aqua;
+  background-color:black;
   width: 100vw;
   height: 100vh;
 
@@ -205,11 +204,26 @@ canvas {
 }
 
 #plane {
-  background-color: darkorange;
-  width: 800px;
+  background-color: #212425;
+  width: 1200px;
   height: 800px;
+  padding: 50px;
 
-  font-size: 100px;
-  font-weight: bold;
+  font-size: 120px;
+  font-weight: bolder;
+
+  text-align: center;
+  text-transform: uppercase;
+
+  font-family: Poppins;
+  // font-style: normal; 
+
+  a{
+    color: white;
+    text-decoration: none;
+  }
+  a:hover{
+      text-decoration: underline;
+  }
 }
 </style>

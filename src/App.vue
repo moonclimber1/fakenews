@@ -13,6 +13,10 @@ body{
   padding:0px;
 }
 
+*{
+  box-sizing: border-box;
+}
+
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
