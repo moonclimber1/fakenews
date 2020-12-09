@@ -1,8 +1,8 @@
 <template>
   <div id="canvas-wrapper"></div>
-  <video id="video" loop crossOrigin="anonymous" playsinline style="display:none">
+  <video id="video" loop muted crossOrigin="anonymous" playsinline style="display:none">
     <source src="@/assets/sintel.mp4" type='video/mp4; codecs="avc1.42E01E, mp4a.40.2"' />
-  <text-layer/>
+    <text-layer />
   </video>
 </template>
 
@@ -14,7 +14,9 @@ import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass.js";
 import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer.js";
 import { UnrealBloomPass } from "three/examples/jsm/postprocessing/UnrealBloomPass.js";
 import { MeshLine, MeshLineMaterial, MeshLineRaycast } from "three.meshline";
-import TextLayer from './TextLayer.vue';
+import TextLayer from "./TextLayer.vue";
+import { MeshBasicMaterial, Object3D } from "three";
+import ThreeTestViviVue from './ThreeTestVivi.vue';
 
 export default {
   components: { TextLayer },
@@ -39,7 +41,7 @@ export default {
     init: function() {
       // Set up Camera
       this.container = document.getElementById("canvas-wrapper");
-      this.camera = new THREE.PerspectiveCamera(70, this.container.clientWidth / this.container.clientHeight, 0.01, 10);
+      this.camera = new THREE.PerspectiveCamera(70, this.container.clientWidth / this.container.clientHeight, 0.01, 100);
       this.camera.position.z = 1;
 
       // Set up Scene
@@ -67,7 +69,7 @@ export default {
       this.composerGL = new EffectComposer(this.rendererGL);
       this.composerGL.addPass(new RenderPass(this.sceneGL, this.camera));
 
-      // const bloomPass = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 1.5, 0.4, 0.85);
+      // const bloomPass = new UnrealBloomPass(new THREE.Vector2(this.container.clientWidth, this.container.clientHeight), 1.5, 0.4, 0.85);
       // bloomPass.threshold = 0;
       // bloomPass.strength = 2;
       // bloomPass.radius = 0;
@@ -77,48 +79,23 @@ export default {
       window.addEventListener("resize", this.onWindowResize, false);
 
       // Set up trackball controls
-      // this.controls = new TrackballControls(this.camera, this.rendererGL.domElement);
-      // this.controls.rotateSpeed = 4.0;
-      // this.controls.zoomSpeed = 2.0;
-      // this.controls.panSpeed = 4.0;
-      // this.controls.keys = [65, 83, 68];
+      this.controls = new TrackballControls(this.camera, this.rendererGL.domElement);
+      this.controls.rotateSpeed = 4.0;
+      this.controls.zoomSpeed = 2.0;
+      this.controls.panSpeed = 4.0;
     },
     createScene: function() {
       this.sceneGL = new THREE.Scene();
       this.sceneCSS = new THREE.Scene();
 
-      // Create inner Video Mesh
-      const geometry = new THREE.SphereBufferGeometry(0.2, 4, 2);
-      const video = document.getElementById("video");
-      video.play();
-      const videoTexture = new THREE.VideoTexture(video);
-      const material = new THREE.MeshBasicMaterial({ map: videoTexture });
-      // const material = new THREE.MeshPhongMaterial({ color: 0xcccccc, flatShading: true });
-      this.videoMesh = new THREE.Mesh(geometry, material);
-      this.videoMesh.rotation.y = -Math.PI / 2;
-      this.sceneGL.add(this.videoMesh);
+      // const diamond = this.createVideoDiamond()
+      // this.sceneGL.add(diamond)
 
-      // // Create outer Edges Mesh
-      // const edges = new THREE.EdgesGeometry(geometry);
-      // this.edgesMesh = new THREE.LineSegments(edges, new THREE.LineBasicMaterial({ color: 0xffffff, linewidth: 1 }));
-      // this.edgesMesh.scale.set(1.4, 1.4, 1.4);
-      // this.sceneGL.add(this.edgesMesh);
+      // const cube = this.createVideoCube();
+      // this.sceneGL.add(cube);
 
-      // Create thick outer edges
-      const edgeLine = new MeshLine();
-      edgeLine.setGeometry(new THREE.EdgesGeometry(geometry));
-      const resolution = new THREE.Vector2(this.container.clientWidth, this.container.clientHeight);
-      this.edgesMesh = new THREE.Mesh(
-        edgeLine,
-        new MeshLineMaterial({
-          color: "white",
-          resolution,
-          lineWidth: 0.005,
-          side: THREE.DoubleSide,
-        })
-      );
-      this.edgesMesh.scale.set(1.4, 1.4, 1.4);
-      this.sceneGL.add(this.edgesMesh);
+      const spiral = this.createSpiral()
+      this.sceneGL.add(spiral);
 
       // CSS 3D Object
       const textLayer = document.getElementById("textLayer");
@@ -136,6 +113,113 @@ export default {
       light2.position.set(-3, 1, 1);
       this.sceneGL.add(light2);
     },
+    createVideoDiamond: function() {
+      const diamond = new THREE.Object3D();
+
+      // Create inner Video Mesh
+      const geometry = new THREE.SphereBufferGeometry(0.2, 4, 2);
+      const material = this.createVideoMaterial("video");
+      // const material = new THREE.MeshPhongMaterial({ color: 0xcccccc, flatShading: true });
+      const videoMesh = new THREE.Mesh(geometry, material);
+      videoMesh.rotation.y = -Math.PI / 2;
+
+      diamond.add(videoMesh);
+      diamond.add(this.createEdgesMesh(geometry));
+
+      return diamond;
+    },
+    createCube(){
+      const geometry = new THREE.BoxGeometry(0.2, 0.2, 0.2);
+      const material = new THREE.MeshPhongMaterial({ color: 0xcccccc, flatShading: true });
+      return new THREE.Mesh(geometry, material);
+    },
+    createVideoCube: function() {
+      const cube = new THREE.Object3D();
+      const geometry = new THREE.BoxGeometry(0.1, 0.1, 0.1);
+      const material = this.createVideoMaterial("video");
+      const videoMesh = new THREE.Mesh(geometry, material);
+      cube.add(videoMesh);
+      cube.add(this.createEdgesMesh(geometry));
+
+      return cube;
+    },
+    createVideoMaterial(id) {
+      const video = document.getElementById(id);
+      video.play();
+      const videoTexture = new THREE.VideoTexture(video);
+      return new THREE.MeshBasicMaterial({ map: videoTexture });
+    },
+    createEdgesMesh(geometry) {
+      // // Create outer Edges Mesh
+      // const edges = new THREE.EdgesGeometry(geometry);
+      // const edgesMesh = new THREE.LineSegments(edges, new THREE.LineBasicMaterial({ color: 0xffffff, linewidth: 1 }));
+      // edgesMesh.scale.set(1.3, 1.3, 1.3);
+      // return edgesMesh;
+
+      // Create thick outer edges
+      const edgeLine = new MeshLine();
+      edgeLine.setGeometry(new THREE.EdgesGeometry(geometry));
+      const resolution = new THREE.Vector2(this.container.clientWidth, this.container.clientHeight);
+      const edgesMesh = new THREE.Mesh(
+        edgeLine,
+        new MeshLineMaterial({
+          color: "white",
+          resolution,
+          lineWidth: 0.009,
+          side: THREE.DoubleSide,
+        })
+      );
+      edgesMesh.scale.set(1.4, 1.4, 1.4);
+      return edgesMesh
+    },
+    // drawArchimedicSpiral(n, size, turn) {
+    //   const increment = (2 * Math.PI) / n;
+
+    //   for (let a = 0; a < turn * 2 * Math.PI; a += increment) {
+    //     let radius = a * size;
+    //     const x = Math.cos(a) * radius;
+    //     const y = Math.sin(a) * radius;
+    //   }
+    // },
+    getTheodorus(segments, len) {
+      let result = [];
+      let radius = 0;
+      let angle = 0;
+      for (var i = 0; i < segments; i++) {
+        radius = Math.sqrt(i + 1)
+        angle += Math.asin(1 / radius);
+        let x = Math.cos(angle) * radius * len
+        let y = Math.sin(angle) * radius * len
+        let z = radius * len
+        result[i] = new THREE.Vector3(x,y,z)
+      }
+      return result;
+    },
+    createSpiral(){
+      const spiral = new Object3D()
+      let points = this.getTheodorus(90, 0.5)
+      points.forEach(point => {
+
+        const diamond = this.createVideoDiamond()
+        diamond.position.set(point.x, point.y, point.z);
+        spiral.add(diamond)
+
+        // const cubeSphere = this.createRandomCubesInSphere(2,10)
+        // diamond.add(cubeSphere)
+      })
+      return spiral
+    },
+    createRandomCubesInSphere(radius, n){
+        const sphere = new THREE.Object3D
+        for(let i = 0; i < n; n++){
+            const pos = new THREE.Vector3((Math.random-0.5), (Math.random-0.5),(Math.random-0.5))
+            pos.multiplyScalar(2 * radius)
+            const cube = this.createCube()
+            cube.position.set(pos.x, pos.y, pos.z)
+            sphere.add(cube)
+        }
+        return sphere
+    },
     animate: function(now) {
       requestAnimationFrame(this.animate);
 
@@ -150,11 +234,11 @@ export default {
       // this.edgesMesh.rotation.y = now * 0.0008;
 
       // this.sceneGL.rotation.x = now * 0.0005;
-      this.sceneGL.rotation.y = now * 0.0004;
+      // this.sceneGL.rotation.y = now * 0.0004;
       // this.sceneCSS.rotation.x = now * 0.0005;
-      this.sceneCSS.rotation.y = now * 0.0004;
+      // this.sceneCSS.rotation.y = now * 0.0004;
 
-      // this.controls.update();
+      this.controls.update();
       this.composerGL.render();
       this.rendererCSS.render(this.sceneCSS, this.camera);
     },
@@ -185,17 +269,15 @@ canvas {
 } */
 
 #canvas-wrapper {
-  
-  background-color:black;
+  background-color: black;
   width: 100vw;
   height: 100vh;
 
-  pointer-events: none;
+  // pointer-events: none;
 
-  canvas{
+  canvas {
     width: 100%;
     height: 100%;
   }
 }
-
 </style>
