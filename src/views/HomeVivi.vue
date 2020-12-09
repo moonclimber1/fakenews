@@ -1,7 +1,6 @@
 <template>
   <div class="home">
-    <moving-circle />
-    <start-text-wall/>
+    <!-- <moving-circle/> -->
     <three-test-vivi/>
      <!-- <three-test />  -->
     <!-- <text-layer/>  -->
@@ -23,8 +22,8 @@ export default {
   name: "Home",
   components: {
     // ThreeTest,
-    MovingCircle,
-    StartTextWall,
+    // MovingCircle,
+    // StartTextWall,
     ThreeTestVivi,
     // TextLayer,
   },

@@ -1,8 +1,7 @@
 <template>
   <div class="home">
     <moving-circle />
-   <three-test />
-    <text-layer/> 
+    <three-test />
   </div>
 </template>
 
@@ -10,7 +9,7 @@
 import ThreeTest from "../components/ThreeTest.vue";
 // import ThreeTestVivi from "../components/ThreeTestVivi.vue";
 import MovingCircle from "../components/MovingCircle";
-import TextLayer from '../components/TextLayer.vue';
+import TextLayer from "../components/TextLayer.vue";
 
 // @ is an alias to /src
 // import HelloWorld from '@/components/HelloWorld.vue'
@@ -20,7 +19,7 @@ export default {
   components: {
     ThreeTest,
     MovingCircle,
-    TextLayer,
+    
   },
 };
 </script>

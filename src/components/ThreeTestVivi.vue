@@ -2,8 +2,8 @@
   <div id="canvas-wrapper"></div>
   <video id="video" loop crossOrigin="anonymous" playsinline style="display:none">
     <source src="@/assets/sintel.mp4" type='video/mp4; codecs="avc1.42E01E, mp4a.40.2"' />
-  <start-text-wall cssID="blub"/>
-  <start-text-wall/>
+  <start-text-wall cssID="real" text="real"/>
+  <start-text-wall cssID="fake" text="fake"/>
   </video>
 </template>
 
@@ -87,16 +87,14 @@ export default {
 
 
       // CSS 3D Object
-      // const StartTextWall1 = document.getElementById("StartTextWall1");
-      // const object = new CSS3DObject(StartTextWall1);
-      // object.position.set(-0.57, 0, -0.6);
-      // object.rotation.y = 1.25;
+      // const wallReal = document.getElementById("real");
+      // const object = new CSS3DObject(wallReal);
       // object.scale.set(0.001, 0.001, 0.001);
       // this.sceneCSS.add(object);
 
-      // const StartTextWall2 = document.getElementById("StartTextWall2");
-      // const object2 = new CSS3DObject(StartTextWall2);
-      // object2.position.set(0, -0.6, 0);
+      // const wallFake = document.getElementById("fake");
+      // const object2 = new CSS3DObject(wallFake);
+      // object2.position.set(0, -0.1, 0);
       // object2.rotation.z = this.deg2rad(-45);
       // object2.rotation.x = this.deg2rad(-90);
       // object2.scale.set(0.001, 0.001, 0.001);
@@ -138,14 +136,6 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="scss" scoped>
-/* #container {
-  position: relative; 
-}
-canvas {
-  display: block;
-  width: 800px;
-  height: 500px;
-} */
 
 #canvas-wrapper {
   

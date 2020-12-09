@@ -1,121 +1,96 @@
 <template>
-   <div id={{ cssID }}>
-        <svg width="100%" height="100%"  xmlns="http://www.w3.org/2000/svg">
+  <div class="startTextWall">
+    <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+      <filter id="distort" x="0%" y="0%" width="120%" height="120%">
+        <feOffset result="offOut" in="SourceGraphic" dx="2" dy="2">
+          <animate
+            id="shadowAnimate"
+            attributeName="dx"
+            values="0;2;0;-2;0"
+            from="0"
+            to="100"
+            dur="0.2s"
+            repeatCount="indefinite"
+          ></animate>
+        </feOffset>
 
-<filter id="distort" x="0%" y="0%" width="120%" height="120%">
-
-    <feOffset result="offOut" in="SourceGraphic" dx="2" dy="2">
-
-<animate
-id="shadowAnimate"
-attributeName="dx"
-values="0;2;0;-2;0"
-from="0"
-to="100"
-dur="0.2s"
-repeatCount="indefinite"
-
-></animate>
-
-    </feOffset>
-
-
-    <feColorMatrix 
-    in="offOut"
-    type="matrix"  
-    result="RED"
-   values="
+        <feColorMatrix
+          in="offOut"
+          type="matrix"
+          result="RED"
+          values="
    2 0 0 0 0
    0 0 0 0 0
    0 0 .3 0 0
    0 0 0 1 0
-   ">
+   "
+        >
+          <animate
+            id="colorAnim"
+            attributeName="values"
+            from="  2 0 0 0 0 0 0 0 0 0 0 0 .3 0 0 0 0 0 1 0"
+            to=" 2 0 0 0 0 0 0 0 0 0 0 0 .3 0 0 0 0 0 1 0"
+            values=" 2 0 0 0 0 0 0 0 0 0 0 0 .3 0 0 0 0 0 1 0; 0.16 0 0 0 0 0 0.9 0 0 0 0 0 0.58 0 0 0 0 0 1 0; 2 0 0 0 0 0 0 0 0 0 0 0 .3 0 0 0 0 0 1 0;"
+            dur=".4s"
+            repeatCount="indefinite"
+          ></animate>
+        </feColorMatrix>
 
-<animate
-id="colorAnim"
-attributeName="values"
-from="  2 0 0 0 0 0 0 0 0 0 0 0 .3 0 0 0 0 0 1 0"
-to=" 2 0 0 0 0 0 0 0 0 0 0 0 .3 0 0 0 0 0 1 0"
-values=" 2 0 0 0 0 0 0 0 0 0 0 0 .3 0 0 0 0 0 1 0; 0.16 0 0 0 0 0 0.9 0 0 0 0 0 0.58 0 0 0 0 0 1 0; 2 0 0 0 0 0 0 0 0 0 0 0 .3 0 0 0 0 0 1 0;"
-dur=".4s"
-repeatCount="indefinite"
+        <feBlend in="SourceGraphic" in2="RED" mode="normal" result="SHADOW" />
 
-></animate>
+        <feTurbulence id="turbulence" baseFrequency="0.02 0.03" numOctaves="40" result="NOISE" seed="0">
+          <animate
+            id="noiseAnimate"
+            attributeName="baseFrequency"
+            values="2.5;2.7"
+            from="0"
+            to="50"
+            dur="10s"
+            repeatCount="indefinite"
+          ></animate>
+        </feTurbulence>
 
+        <feDisplacementMap in2="NOISE" in="SHADOW" scale="20"></feDisplacementMap>
+      </filter>
 
-</feColorMatrix>
-  
-    <feBlend in="SourceGraphic" in2="RED" mode="normal"  result="SHADOW"/> 
-
-    <feTurbulence id="turbulence" baseFrequency="0.02 0.03" numOctaves="40" result="NOISE" seed="0">
-
-    <animate 
-    id="noiseAnimate" 
-    attributeName="baseFrequency"
-    values="2.5;2.7"
-    from="0"
-    to="50"
-    dur="10s"
-    repeatCount="indefinite">
-</animate>
-
-
-    </feTurbulence>
-
-
-    <feDisplacementMap  in2="NOISE" in="SHADOW" scale="20"></feDisplacementMap>
-
-  
-</filter>
-
-    
-
-
-
-    <text x ="45%" y="80%"  dy="0" fill="white">
-     FAKE
-    </text>
-  
-</svg>
-
-     
-
-   </div>
+      <text x="45%" y="80%" dy="0" fill="white">
+          {{ text }}
+      </text>
+    </svg>
+  </div>
 </template>
 
 <script>
 export default {
   name: "StartTextWall",
   props: {
-      cssID: String
+    cssID: String,
+    text: String
   },
-  data() {},
   mounted() {
-      console.log(this.cssID)
+    const wall = document.getElementsByClassName("startTextWall")[0]
+    wall.id = this.cssID
   },
   methods: {},
 };
 </script>
 
 <style lang="scss" scoped>
+.startTextWall {
+  background-color: purple;
+  width: 2000px;
+  height: 800px;
+  font-size: 810px;
+  color: white;
+  text-anchor: middle;
+  text-transform: uppercase;
 
-#StartTextWall1{
-    background-color: purple;
-    width:2000px;
-    height:800px;
-    font-size: 810px;
-    color:white;
-    text-anchor:middle;
-    
-  svg{
-      background-color:pink;
+  svg {
+    background-color: pink;
   }
 
-  svg text:hover{
-      filter:url(#distort);
+  svg text:hover {
+    filter: url(#distort);
   }
-
-    
 }
-
 </style>
