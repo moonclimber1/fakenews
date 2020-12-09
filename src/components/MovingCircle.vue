@@ -3,45 +3,43 @@
 </template>
 
 <script>
-
 export default {
-  name: "MovingCircle",
+      name: "MovingCircle",
   props: {},
-  data(){
+  data() {
     //   return{
     //       circle: null
     //   }
   },
-  mounted(){
-        const circle = document.querySelector(".circle")
-        window.addEventListener('mousemove', function(event){
-            circle.style.transform= "translate3d(" +event.clientX + "px," + event.clientY + "px, 0px)"
-        })
+  mounted() {
+    const circle = document.querySelector(".circle");
+    window.addEventListener("mousemove", function(event) {
+      circle.style.transform =
+        "translate3d(" + event.clientX + "px," + event.clientY + "px, 0px)";
+    });
   },
   methods: {},
 };
 </script>
 
-
 <style lang="scss" scoped>
-    .circle{
-       
-        position: absolute;
-        top: -10vw;
-        left: -10vw;
+.circle {
+  position: absolute;
+  top: -10vw;
+  left: -10vw;
 
-        width: 20vw;
-        height: 20vw;
-        border-radius: 50%;
+  width: 20vw;
+  height: 20vw;
+  border-radius: 50%;
 
-        background: #46D8BD;
-        mix-blend-mode: exclusion;
+  background: #46d8bd;
+  mix-blend-mode: exclusion;
 
-        z-index: 100;
+  z-index: 100;
 
-        // transform-origin: -50% -50%;
-        transition: transform 1.5s cubic-bezier(.02,1.23,.79,1.08);
+  // transform-origin: -50% -50%;
+  transition: transform 1.5s cubic-bezier(0.02, 1.23, 0.79, 1.08);
 
-        pointer-events: none;
-    }
+  pointer-events: none;
+}
 </style>

@@ -1,8 +1,8 @@
 <template>
   <div class="home">
     <moving-circle />
-    <three-test />
-    <!-- <text-layer/> -->
+     <three-test /> 
+    <text-layer/> 
   </div>
 </template>
 
