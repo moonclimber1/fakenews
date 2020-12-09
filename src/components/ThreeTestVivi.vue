@@ -2,7 +2,8 @@
   <div id="canvas-wrapper"></div>
   <video id="video" loop crossOrigin="anonymous" playsinline style="display:none">
     <source src="@/assets/sintel.mp4" type='video/mp4; codecs="avc1.42E01E, mp4a.40.2"' />
-  <text-layer/>
+  <start-text-wall cssID="blub"/>
+  <start-text-wall/>
   </video>
 </template>
 
@@ -12,13 +13,14 @@ import { TrackballControls } from "three/examples/jsm/controls/TrackballControls
 import { CSS3DRenderer, CSS3DObject } from "three/examples/jsm/renderers/CSS3DRenderer.js";
 import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass.js";
 import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer.js";
-import { UnrealBloomPass } from "three/examples/jsm/postprocessing/UnrealBloomPass.js";
-import { MeshLine, MeshLineMaterial, MeshLineRaycast } from "three.meshline";
-import TextLayer from './TextLayer.vue';
+//import { UnrealBloomPass } from "three/examples/jsm/postprocessing/UnrealBloomPass.js";
+//import { MeshLine, MeshLineMaterial, MeshLineRaycast } from "three.meshline";
+import StartTextWall from './StartTextWall.vue';
+
 
 export default {
-  components: { TextLayer },
-  name: "ThreeTest",
+  components: {StartTextWall},
+  name: "ThreeTestVivi",
   static() {
     return {
       camera: {},
@@ -67,66 +69,40 @@ export default {
       this.composerGL = new EffectComposer(this.rendererGL);
       this.composerGL.addPass(new RenderPass(this.sceneGL, this.camera));
 
-      // const bloomPass = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 1.5, 0.4, 0.85);
-      // bloomPass.threshold = 0;
-      // bloomPass.strength = 2;
-      // bloomPass.radius = 0;
-      // this.composerGL.addPass(bloomPass);
+      
 
       //Resize Listener
       window.addEventListener("resize", this.onWindowResize, false);
 
-      // Set up trackball controls
-      // this.controls = new TrackballControls(this.camera, this.rendererGL.domElement);
-      // this.controls.rotateSpeed = 4.0;
-      // this.controls.zoomSpeed = 2.0;
-      // this.controls.panSpeed = 4.0;
-      // this.controls.keys = [65, 83, 68];
+      //Set up trackball controls
+      this.controls = new TrackballControls(this.camera, this.rendererGL.domElement);
+      this.controls.rotateSpeed = 4.0;
+      this.controls.zoomSpeed = 2.0;
+      this.controls.panSpeed = 4.0;
+      this.controls.keys = [65, 83, 68];
     },
     createScene: function() {
       this.sceneGL = new THREE.Scene();
       this.sceneCSS = new THREE.Scene();
 
-      // Create inner Video Mesh
-      const geometry = new THREE.SphereBufferGeometry(0.2, 4, 2);
-      const video = document.getElementById("video");
-      video.play();
-      const videoTexture = new THREE.VideoTexture(video);
-      const material = new THREE.MeshBasicMaterial({ map: videoTexture });
-      // const material = new THREE.MeshPhongMaterial({ color: 0xcccccc, flatShading: true });
-      this.videoMesh = new THREE.Mesh(geometry, material);
-      this.videoMesh.rotation.y = -Math.PI / 2;
-      this.sceneGL.add(this.videoMesh);
-
-      // // Create outer Edges Mesh
-      // const edges = new THREE.EdgesGeometry(geometry);
-      // this.edgesMesh = new THREE.LineSegments(edges, new THREE.LineBasicMaterial({ color: 0xffffff, linewidth: 1 }));
-      // this.edgesMesh.scale.set(1.4, 1.4, 1.4);
-      // this.sceneGL.add(this.edgesMesh);
-
-      // Create thick outer edges
-      const edgeLine = new MeshLine();
-      edgeLine.setGeometry(new THREE.EdgesGeometry(geometry));
-      const resolution = new THREE.Vector2(this.container.clientWidth, this.container.clientHeight);
-      this.edgesMesh = new THREE.Mesh(
-        edgeLine,
-        new MeshLineMaterial({
-          color: "white",
-          resolution,
-          lineWidth: 0.005,
-          side: THREE.DoubleSide,
-        })
-      );
-      this.edgesMesh.scale.set(1.4, 1.4, 1.4);
-      this.sceneGL.add(this.edgesMesh);
 
       // CSS 3D Object
-      const textLayer = document.getElementById("textLayer");
-      const object = new CSS3DObject(textLayer);
-      object.position.set(0, 0, -0.3);
-      object.rotation.y = 0;
-      object.scale.set(0.001, 0.001, 0.001);
-      this.sceneCSS.add(object);
+      // const StartTextWall1 = document.getElementById("StartTextWall1");
+      // const object = new CSS3DObject(StartTextWall1);
+      // object.position.set(-0.57, 0, -0.6);
+      // object.rotation.y = 1.25;
+      // object.scale.set(0.001, 0.001, 0.001);
+      // this.sceneCSS.add(object);
+
+      // const StartTextWall2 = document.getElementById("StartTextWall2");
+      // const object2 = new CSS3DObject(StartTextWall2);
+      // object2.position.set(0, -0.6, 0);
+      // object2.rotation.z = this.deg2rad(-45);
+      // object2.rotation.x = this.deg2rad(-90);
+      // object2.scale.set(0.001, 0.001, 0.001);
+      // this.sceneCSS.add(object2);
+
+      
 
       // Add light so that we can see something
       const light1 = new THREE.PointLight(0xffffff, 1);
@@ -138,23 +114,7 @@ export default {
     },
     animate: function(now) {
       requestAnimationFrame(this.animate);
-
-      // if(!this.lastTimestamp){this.lastTimestamp = now}
-      // let delta = (now - this.lastTimestamp) / 16.6667;
-      // this.lastTimestamp = now;
-
-      // this.videoMesh.rotation.x = now * 0.0005;
-      // this.videoMesh.rotation.y = now * 0.0008;
-
-      // this.edgesMesh.rotation.x = now * 0.0005;
-      // this.edgesMesh.rotation.y = now * 0.0008;
-
-      // this.sceneGL.rotation.x = now * 0.0005;
-      this.sceneGL.rotation.y = now * 0.0004;
-      // this.sceneCSS.rotation.x = now * 0.0005;
-      this.sceneCSS.rotation.y = now * 0.0004;
-
-      // this.controls.update();
+      this.controls.update();
       this.composerGL.render();
       this.rendererCSS.render(this.sceneCSS, this.camera);
     },
@@ -164,6 +124,9 @@ export default {
       this.rendererGL.setSize(this.container.clientWidth, this.container.clientHeight);
       this.composerGL.setSize(this.container.clientWidth, this.container.clientHeight);
       this.rendererCSS.setSize(this.container.clientWidth, this.container.clientHeight);
+    },
+    deg2rad(deg){
+        return deg * (Math.PI/180);
     },
   },
   mounted() {
@@ -190,7 +153,7 @@ canvas {
   width: 100vw;
   height: 100vh;
 
-  pointer-events: none;
+  // pointer-events: none;
 
   canvas{
     width: 100%;
