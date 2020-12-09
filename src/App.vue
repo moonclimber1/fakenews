@@ -8,6 +8,7 @@
 </template>
 
 <style>
+@import url("https://use.typekit.net/ygj0kbg.css");
 
 body{
   margin:0px;
@@ -19,7 +20,7 @@ body{
 }
 
 #app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
+  font-family: "Video";
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
