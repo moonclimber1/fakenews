@@ -1,5 +1,5 @@
 <template>
-  <div class="startTextWall">
+  <div class="startTextWall" :id="cssID">
     <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
       <filter id="distort" x="0%" y="0%" width="120%" height="120%">
         <feOffset result="offOut" in="SourceGraphic" dx="2" dy="2">
@@ -54,7 +54,7 @@
       </filter>
 
       <text x="45%" y="80%" dy="0" fill="white">
-          {{ text }}
+        {{ text }}
       </text>
     </svg>
   </div>
@@ -65,12 +65,9 @@ export default {
   name: "StartTextWall",
   props: {
     cssID: String,
-    text: String
+    text: String,
   },
-  mounted() {
-    const wall = document.getElementsByClassName("startTextWall")[0]
-    wall.id = this.cssID
-  },
+  mounted() {},
   methods: {},
 };
 </script>
@@ -78,12 +75,14 @@ export default {
 <style lang="scss" scoped>
 .startTextWall {
   background-color: purple;
-  width: 2000px;
-  height: 800px;
-  font-size: 810px;
+  width: 1000px;
+  height: 400px;
+  font-size: 400px;
+  line-height: 500px;
   color: white;
   text-anchor: middle;
   text-transform: uppercase;
+  text-align: center;
 
   svg {
     background-color: pink;

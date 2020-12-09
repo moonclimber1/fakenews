@@ -4,6 +4,9 @@
     <source src="@/assets/sintel.mp4" type='video/mp4; codecs="avc1.42E01E, mp4a.40.2"' />
   <start-text-wall cssID="real" text="real"/>
   <start-text-wall cssID="fake" text="fake"/>
+
+  <start-text-plane cssID="floor"/>
+  <start-text-plane cssID="ceiling"/>
   </video>
 </template>
 
@@ -16,10 +19,12 @@ import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer
 //import { UnrealBloomPass } from "three/examples/jsm/postprocessing/UnrealBloomPass.js";
 //import { MeshLine, MeshLineMaterial, MeshLineRaycast } from "three.meshline";
 import StartTextWall from './StartTextWall.vue';
+import StartTextPlane from './StartTextPlane.vue';
+import { Object3D } from 'three';
 
 
 export default {
-  components: {StartTextWall},
+  components: {StartTextWall, StartTextPlane},
   name: "ThreeTestVivi",
   static() {
     return {
@@ -86,19 +91,33 @@ export default {
       this.sceneCSS = new THREE.Scene();
 
 
-      // CSS 3D Object
-      // const wallReal = document.getElementById("real");
-      // const object = new CSS3DObject(wallReal);
-      // object.scale.set(0.001, 0.001, 0.001);
-      // this.sceneCSS.add(object);
+    const room = new Object3D();
 
-      // const wallFake = document.getElementById("fake");
-      // const object2 = new CSS3DObject(wallFake);
-      // object2.position.set(0, -0.1, 0);
-      // object2.rotation.z = this.deg2rad(-45);
-      // object2.rotation.x = this.deg2rad(-90);
-      // object2.scale.set(0.001, 0.001, 0.001);
-      // this.sceneCSS.add(object2);
+    const wallReal = new CSS3DObject(document.getElementById("real"));
+    wallReal.position.set(0, 0, 500);
+    wallReal.rotation.y = this.deg2rad(90);
+    room.add(wallReal);
+
+    const wallFake = new CSS3DObject(document.getElementById("fake"));
+    wallFake.position.set(500, 0, 0);
+    room.add(wallFake);
+
+    const floor = new CSS3DObject(document.getElementById("floor"));
+    floor.rotation.x = this.deg2rad(-90);
+    floor.position.set(500,-200, 500);
+    room.add(floor);
+
+    const ceiling = new CSS3DObject(document.getElementById("ceiling"));
+    ceiling.rotation.x = this.deg2rad(90);
+    ceiling.position.set(500,200, 500);
+    room.add(ceiling);
+
+
+
+    room.scale.set(0.001, 0.001, 0.001);
+    room.position.set(0,0, 0);
+    room.rotation.y = this.deg2rad(-45);
+    this.sceneCSS.add(room)
 
       
 
