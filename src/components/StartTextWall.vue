@@ -83,9 +83,10 @@ export default {
   text-anchor: middle;
   text-transform: uppercase;
   text-align: center;
+  
 
   svg {
-    background-color: pink;
+    background-color:black;
   }
 
   svg text:hover {

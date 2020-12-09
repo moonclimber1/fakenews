@@ -20,7 +20,7 @@ export default {
 
 <style lang="scss" scoped>
 .circle {
-  position: absolute;
+  position: fixed;
   top: -10vw;
   left: -10vw;
 
@@ -31,9 +31,8 @@ export default {
   background: #46d8bd;
   mix-blend-mode: exclusion;
 
-  z-index: 100;
+  z-index: 1000;
 
-  // transform-origin: -50% -50%;
   transition: transform 1.5s cubic-bezier(0.02, 1.23, 0.79, 1.08);
 
   pointer-events: none;

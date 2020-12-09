@@ -23,7 +23,7 @@ export default {
 
 <style lang="scss" scoped>
 .startTextPlane {
-  background-color: blue;
+  background-color: black;
   width: 1000px;
   height: 1000px;
   font-size: 50px;
@@ -31,5 +31,6 @@ export default {
 
   text-transform: uppercase;
   overflow: hidden;
+  
 }
 </style>
