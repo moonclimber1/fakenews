@@ -215,15 +215,17 @@ canvas {
   text-align: center;
   text-transform: uppercase;
 
-  font-family: Poppins;
+  font-family: Arial;
   // font-style: normal; 
 
   a{
     color: white;
     text-decoration: none;
-  }
-  a:hover{
+
+    &:hover{
       text-decoration: underline;
+    }
   }
+  
 }
 </style>
