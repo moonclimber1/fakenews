@@ -34,7 +34,7 @@
             dur=".4s"
             repeatCount="indefinite"
           ></animate>
-        </feColorMatrix>
+         </feColorMatrix>
 
         <feBlend in="SourceGraphic" in2="RED" mode="normal" result="SHADOW" />
 
