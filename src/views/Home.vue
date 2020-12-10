@@ -13,7 +13,7 @@ import ThreeTest from "../components/ThreeTest.vue";
 import MovingCircle from "../components/MovingCircle";
 import TextLayer from "../components/TextLayer.vue";
 import StartPlaneCanvas from '../components/StartPlaneCanvas.vue';
-import StartTextPlane from '../components/StartTextPlane.vue';
+
 
 
 // @ is an alias to /src
@@ -25,7 +25,7 @@ export default {
     ThreeTest,
     // MovingCircle,
     // StartPlaneCanvas,
-    // StartTextPlane,
+
     
   },
 };

@@ -21,7 +21,6 @@ import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer
 //import { UnrealBloomPass } from "three/examples/jsm/postprocessing/UnrealBloomPass.js";
 //import { MeshLine, MeshLineMaterial, MeshLineRaycast } from "three.meshline";
 import StartTextWall from './StartTextWall.vue';
-import StartTextPlane from './StartTextPlane.vue';
 import { Object3D } from 'three';
 import StartPlaneCanvas from './StartPlaneCanvas.vue';
 import { gsap } from "gsap";
@@ -30,7 +29,6 @@ import { gsap } from "gsap";
 export default {
   components: {
     StartTextWall, 
-    // StartTextPlane, 
     StartPlaneCanvas
     },
   name: "StartScreen",
@@ -153,15 +151,21 @@ export default {
     const tl = gsap.timeline()
     tl.from(this.camera.position, {duration: 4, z: 20, ease: "power4.out"})
 
+    const self = this
+    window.addEventListener("mousemove", function(event) {
+      
+      // (event.clientX - (window.innerWidth/2))/(window.innerWidth)
+
+      const tilt = ((event.clientX / window.innerWidth) * 2 - 1) * self.deg2rad(-10)
       
 
-      // Add light so that we can see something
-      const light1 = new THREE.PointLight(0xffffff, 1);
-      light1.position.set(3, 1, 1);
-      this.sceneGL.add(light1);
-      const light2 = new THREE.PointLight(0xffffff, 0.3);
-      light2.position.set(-3, 1, 1);
-      this.sceneGL.add(light2);
+      self.sceneGL.rotation.y = tilt
+      self.sceneCSS.rotation.y = tilt
+
+
+      // circle.style.transform =
+      //   "translate3d(" + event.clientX + "px," + event.clientY + "px, 0px)";
+    });
     },
     updateCanvasTexture(){
         console.log("update canvas font")
