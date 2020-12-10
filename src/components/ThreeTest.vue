@@ -8,6 +8,7 @@
 
 <script>
 import * as THREE from "three";
+import Stats from "three/examples/jsm/libs/stats.module.js";
 import { TrackballControls } from "three/examples/jsm/controls/TrackballControls.js";
 import { CSS3DRenderer, CSS3DObject } from "three/examples/jsm/renderers/CSS3DRenderer.js";
 import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass.js";
@@ -16,7 +17,7 @@ import { UnrealBloomPass } from "three/examples/jsm/postprocessing/UnrealBloomPa
 import { MeshLine, MeshLineMaterial, MeshLineRaycast } from "three.meshline";
 import TextLayer from "./TextLayer.vue";
 import { MeshBasicMaterial, Object3D } from "three";
-import ThreeTestViviVue from './ThreeTestVivi.vue';
+import ThreeTestViviVue from "./ThreeTestVivi.vue";
 
 export default {
   components: { TextLayer },
@@ -25,6 +26,7 @@ export default {
     return {
       camera: {},
       sceneGL: {},
+      stats: {},
       rendererGL: {},
       composerGL: {},
       controls: {},
@@ -83,6 +85,10 @@ export default {
       this.controls.rotateSpeed = 4.0;
       this.controls.zoomSpeed = 2.0;
       this.controls.panSpeed = 4.0;
+
+      // Setup stats
+      this.stats = new Stats();
+      document.body.appendChild(this.stats.dom);
     },
     createScene: function() {
       this.sceneGL = new THREE.Scene();
@@ -94,8 +100,11 @@ export default {
       // const cube = this.createVideoCube();
       // this.sceneGL.add(cube);
 
-      const spiral = this.createSpiral()
+      const spiral = this.createSpiral();
       this.sceneGL.add(spiral);
+
+      // const cubeSphere = this.createRandomCubesInSphere(0.5,30)
+      // this.sceneGL.add(cubeSphere)
 
       // CSS 3D Object
       const textLayer = document.getElementById("textLayer");
@@ -128,14 +137,15 @@ export default {
 
       return diamond;
     },
-    createCube(){
-      const geometry = new THREE.BoxGeometry(0.2, 0.2, 0.2);
-      const material = new THREE.MeshPhongMaterial({ color: 0xcccccc, flatShading: true });
+    createCube() {
+      const geometry = new THREE.BoxBufferGeometry(0.04, 0.04, 0.04);
+      const material = new MeshBasicMaterial();
+      // const material = new THREE.MeshPhongMaterial({ color: 0xcccccc, flatShading: true });
       return new THREE.Mesh(geometry, material);
     },
     createVideoCube: function() {
       const cube = new THREE.Object3D();
-      const geometry = new THREE.BoxGeometry(0.1, 0.1, 0.1);
+      const geometry = new THREE.BoxBufferGeometry(0.2, 0.2, 0.2);
       const material = this.createVideoMaterial("video");
       const videoMesh = new THREE.Mesh(geometry, material);
       cube.add(videoMesh);
@@ -170,7 +180,7 @@ export default {
         })
       );
       edgesMesh.scale.set(1.4, 1.4, 1.4);
-      return edgesMesh
+      return edgesMesh;
     },
     // drawArchimedicSpiral(n, size, turn) {
     //   const increment = (2 * Math.PI) / n;
@@ -186,39 +196,56 @@ export default {
       let radius = 0;
       let angle = 0;
       for (var i = 0; i < segments; i++) {
-        radius = Math.sqrt(i + 1)
+        radius = Math.sqrt(i + 1);
         angle += Math.asin(1 / radius);
-        let x = Math.cos(angle) * radius * len
-        let y = Math.sin(angle) * radius * len
-        let z = radius * len
-        result[i] = new THREE.Vector3(x,y,z)
+        let x = Math.cos(angle) * radius * len;
+        let y = Math.sin(angle) * radius * len;
+        let z = radius * len;
+        result[i] = new THREE.Vector3(x, y, z);
       }
       return result;
     },
-    createSpiral(){
-      const spiral = new Object3D()
-      let points = this.getTheodorus(90, 0.5)
-      points.forEach(point => {
+    createSpiral() {
+      const spiral = new Object3D();
+      let points = this.getTheodorus(120, 0.6);
+      points.forEach((point, index) => {
+        const spiralPoint = new THREE.Object3D();
+        spiralPoint.position.set(point.x, point.y, point.z);
 
-        const diamond = this.createVideoDiamond()
-        diamond.position.set(point.x, point.y, point.z);
-        spiral.add(diamond)
-
-        // const cubeSphere = this.createRandomCubesInSphere(2,10)
-        // diamond.add(cubeSphere)
-      })
-      return spiral
-    },
-    createRandomCubesInSphere(radius, n){
-        const sphere = new THREE.Object3D
-        for(let i = 0; i < n; n++){
-            const pos = new THREE.Vector3((Math.random-0.5), (Math.random-0.5),(Math.random-0.5))
-            pos.multiplyScalar(2 * radius)
-            const cube = this.createCube()
-            cube.position.set(pos.x, pos.y, pos.z)
-            sphere.add(cube)
+        if (index % 2 == Math.round(Math.random() - 0.3)) {
+          const diamond = this.createVideoDiamond();
+          diamond.position.set((Math.random() - 0.5) * 0.5, (Math.random() - 0.5) * 0.5, (Math.random() - 0.5) * 0.5);
+          spiralPoint.add(diamond);
         }
-        return sphere
+
+        if (index % 5 == Math.round(Math.random())) {
+          const cube = this.createVideoCube();
+          cube.position.set((Math.random() - 0.5) * 0.7, (Math.random() - 0.5) * 0.7, (Math.random() - 0.5) * 0.7);
+          spiralPoint.add(cube);
+        }
+
+        const cubeSphere = this.createRandomCubesInSphere(0.5, 15);
+
+        spiralPoint.add(cubeSphere);
+
+        spiral.add(spiralPoint);
+      });
+      return spiral;
+    },
+    createRandomCubesInSphere(radius, n) {
+      const sphere = new THREE.Object3D();
+
+      for (let i = 0; i < n; i++) {
+        const pos = new THREE.Vector3(Math.random() - 0.5, Math.random() - 0.5, Math.random() - 0.5);
+        pos.multiplyScalar(2 * radius);
+        const cube = this.createCube();
+        cube.position.set(pos.x, pos.y, pos.z);
+        cube.rotation.x = Math.random() * 2 * Math.PI;
+        cube.rotation.y = Math.random() * 2 * Math.PI;
+        cube.rotation.z = Math.random() * 2 * Math.PI;
+        sphere.add(cube);
+      }
+      return sphere;
     },
     animate: function(now) {
       requestAnimationFrame(this.animate);
@@ -241,6 +268,8 @@ export default {
       this.controls.update();
       this.composerGL.render();
       this.rendererCSS.render(this.sceneCSS, this.camera);
+
+      this.stats.update();
     },
     onWindowResize: function() {
       this.camera.aspect = this.container.clientWidth / this.container.clientHeight;

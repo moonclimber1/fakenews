@@ -74,7 +74,7 @@ export default {
 
 <style lang="scss" scoped>
 .startTextWall {
-  background-color: purple;
+  background-color: black;
   width: 1000px;
   height: 400px;
   font-size: 400px;
