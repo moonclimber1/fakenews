@@ -6,7 +6,6 @@
 export default {
       name: "MovingCircle",
   props: {},
-  data() {},
   mounted() {
     const circle = document.querySelector(".circle");
     window.addEventListener("mousemove", function(event) {

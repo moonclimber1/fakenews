@@ -9,7 +9,15 @@ export default {
   mounted() {
     const canvas = document.getElementById("text-canvas");
     this.ctx = canvas.getContext("2d");
-    this.draw()
+    this.draw();
+
+    const self = this;
+    document.fonts.ready.then(function() {
+      if(document.fonts.check("1em Video")){
+        self.draw();
+        self.$emit('updated')
+      }
+    });
   },
   data() {
     return {
@@ -19,7 +27,7 @@ export default {
     };
   },
   methods: {
-    draw() {
+    draw: function () {
       this.ctx.clearRect(0, 0, 2000, 2000);
 
       this.ctx.fillStyle = "#000000";

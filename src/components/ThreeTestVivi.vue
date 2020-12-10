@@ -6,7 +6,7 @@
   <start-text-wall cssID="fake" text="fake"/>
   <!-- <start-text-plane cssID="floor"/>
   <start-text-plane cssID="ceiling"/> -->
-  <start-plane-canvas/>
+  <start-plane-canvas @updated="updateCanvasTexture"/>
 
 
   </video>
@@ -42,10 +42,12 @@ export default {
       controls: {},
       videoMesh: {},
       edgesMesh: {},
+      canvasMaterial: {},
       container: {},
       lastTimestamp: {},
       sceneCSS: {},
       rendererCSS: {},
+
     };
   },
   props: {},
@@ -54,7 +56,7 @@ export default {
       // Set up Camera
       this.container = document.getElementById("canvas-wrapper");
       this.camera = new THREE.PerspectiveCamera(70, this.container.clientWidth / this.container.clientHeight, 0.01, 10);
-      this.camera.position.z = 1;
+      this.camera.position.z = 1.25;
 
       // Set up Scene
       this.createScene();
@@ -132,14 +134,14 @@ export default {
 
 
     const geometry = new THREE.PlaneBufferGeometry(1, 1);
-    const material = new THREE.MeshBasicMaterial( {map: texture, side: THREE.DoubleSide} );
-    const floor = new THREE.Mesh(geometry, material)
+    this.canvasMaterial = new THREE.MeshBasicMaterial( {map: texture, side: THREE.DoubleSide} );
+    const floor = new THREE.Mesh(geometry, this.canvasMaterial)
     floor.rotation.x = this.deg2rad(-90);
     floor.position.set(0.5,-0.2, 0.5);
     planes.add(floor);
     
 
-    const ceiling = new THREE.Mesh(geometry, material)
+    const ceiling = new THREE.Mesh(geometry, this.canvasMaterial)
     ceiling.rotation.x = this.deg2rad(90);
     ceiling.position.set(0.5,0.2, 0.5);
     planes.add(ceiling);
@@ -167,6 +169,10 @@ export default {
       const light2 = new THREE.PointLight(0xffffff, 0.3);
       light2.position.set(-3, 1, 1);
       this.sceneGL.add(light2);
+    },
+    updateCanvasTexture(){
+        console.log("update canvas font")
+        this.canvasMaterial.map.needsUpdate = true;
     },
     animate: function(now) {
       requestAnimationFrame(this.animate);
