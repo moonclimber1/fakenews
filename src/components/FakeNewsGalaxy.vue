@@ -20,7 +20,7 @@ import { MeshBasicMaterial, Object3D } from "three";
 
 export default {
   components: { TextLayer },
-  name: "ThreeTest",
+  name: "FakeNewsGalaxy",
   static() {
     return {
       camera: {},

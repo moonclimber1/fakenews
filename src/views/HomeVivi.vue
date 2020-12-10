@@ -16,12 +16,8 @@ import TextLayer from "../components/TextLayer.vue";
 export default {
   name: "Home",
   components: {
-    // ThreeTest,
     MovingCircle,
-    // StartTextWall,
-    
     StartScreen,
-    // TextLayer,
   },
 };
 </script>

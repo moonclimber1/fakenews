@@ -2,17 +2,19 @@
   <div class="home">
     
     <!-- <moving-circle /> -->
-    <three-test />
+    <fake-news-galaxy/>
     <!-- <start-plane-canvas/> -->
    
   </div>
 </template>
 
 <script>
-import ThreeTest from "../components/ThreeTest.vue";
+
 import MovingCircle from "../components/MovingCircle";
 import TextLayer from "../components/TextLayer.vue";
 import StartPlaneCanvas from '../components/StartPlaneCanvas.vue';
+import FakeNewsGalaxy from '../components/FakeNewsGalaxy.vue';
+
 
 
 
@@ -22,7 +24,7 @@ import StartPlaneCanvas from '../components/StartPlaneCanvas.vue';
 export default {
   name: "Home",
   components: {
-    ThreeTest,
+    FakeNewsGalaxy,
     // MovingCircle,
     // StartPlaneCanvas,
 
