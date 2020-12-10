@@ -68,5 +68,6 @@ export default {
 start-plane-canvas {
   width: 2000px;
   height: 2000px;
+  
 }
 </style>
