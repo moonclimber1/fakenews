@@ -24,6 +24,7 @@ import StartTextWall from './StartTextWall.vue';
 import StartTextPlane from './StartTextPlane.vue';
 import { Object3D } from 'three';
 import StartPlaneCanvas from './StartPlaneCanvas.vue';
+import { gsap } from "gsap";
 
 
 export default {
@@ -40,11 +41,8 @@ export default {
       rendererGL: {},
       composerGL: {},
       controls: {},
-      videoMesh: {},
-      edgesMesh: {},
       canvasMaterial: {},
       container: {},
-      lastTimestamp: {},
       sceneCSS: {},
       rendererCSS: {},
 
@@ -57,6 +55,7 @@ export default {
       this.container = document.getElementById("canvas-wrapper");
       this.camera = new THREE.PerspectiveCamera(70, this.container.clientWidth / this.container.clientHeight, 0.01, 10);
       this.camera.position.z = 1.25;
+      console.log("🚀 ~ file: StartScreen.vue ~ line 57 ~ this.camera.position", this.camera.position)
 
       // Set up Scene
       this.createScene();
@@ -150,15 +149,9 @@ export default {
     this.sceneGL.add(planes);
     
 
-    // const ceiling = new CSS3DObject(document.getElementById("ceiling"));
-    // ceiling.rotation.x = this.deg2rad(90);
-    // ceiling.position.set(500,200, 500);
-    // walls.add(ceiling);
-
-    // const cube = this.createCube();
-    // this.sceneGL.add(cube);
-
-   
+    
+    const tl = gsap.timeline()
+    tl.from(this.camera.position, {duration: 4, z: 20, ease: "power4.out"})
 
       
 
@@ -176,7 +169,7 @@ export default {
     },
     animate: function(now) {
       requestAnimationFrame(this.animate);
-      this.controls.update();
+      // this.controls.update();
       this.composerGL.render();
       this.rendererCSS.render(this.sceneCSS, this.camera);
     },
