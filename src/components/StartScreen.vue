@@ -43,7 +43,7 @@ export default {
       container: {},
       sceneCSS: {},
       rendererCSS: {},
-
+      cursor: {},
     };
   },
   props: {},
@@ -150,22 +150,15 @@ export default {
     
     const tl = gsap.timeline()
     tl.from(this.camera.position, {duration: 4, z: 20, ease: "power4.out"})
-
+    
+    this.cursor = {x:0, y:0}
     const self = this
     window.addEventListener("mousemove", function(event) {
-      
-      // (event.clientX - (window.innerWidth/2))/(window.innerWidth)
-
-      const tilt = ((event.clientX / window.innerWidth) * 2 - 1) * self.deg2rad(-10)
-      
-
-      self.sceneGL.rotation.y = tilt
-      self.sceneCSS.rotation.y = tilt
-
-
-      // circle.style.transform =
-      //   "translate3d(" + event.clientX + "px," + event.clientY + "px, 0px)";
+        self.cursor.x = event.clientX
+        self.cursor.y = event.clientY
     });
+        
+        
     },
     updateCanvasTexture(){
         console.log("update canvas font")
@@ -174,6 +167,18 @@ export default {
     animate: function(now) {
       requestAnimationFrame(this.animate);
       // this.controls.update();
+
+
+      const desiredYTilt = ((this.cursor.x / window.innerWidth) * 2 - 1) * this.deg2rad(7)
+      const yTilt = THREE.MathUtils.lerp(this.sceneGL.rotation.y, desiredYTilt, 0.04)
+      this.sceneGL.rotation.y = yTilt
+      this.sceneCSS.rotation.y = yTilt
+
+      const desiredXTilt = ((this.cursor.y / window.innerHeight) * 2 - 1) * this.deg2rad(3)
+      const xTilt = THREE.MathUtils.lerp(this.sceneGL.rotation.x, desiredXTilt, 0.04)
+      this.sceneGL.rotation.x = xTilt
+      this.sceneCSS.rotation.x = xTilt
+
       this.composerGL.render();
       this.rendererCSS.render(this.sceneCSS, this.camera);
     },
