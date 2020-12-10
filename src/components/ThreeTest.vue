@@ -17,7 +17,6 @@ import { UnrealBloomPass } from "three/examples/jsm/postprocessing/UnrealBloomPa
 import { MeshLine, MeshLineMaterial, MeshLineRaycast } from "three.meshline";
 import TextLayer from "./TextLayer.vue";
 import { MeshBasicMaterial, Object3D } from "three";
-import ThreeTestViviVue from "./ThreeTestVivi.vue";
 
 export default {
   components: { TextLayer },

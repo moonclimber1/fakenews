@@ -32,7 +32,7 @@ export default {
     // StartTextPlane, 
     StartPlaneCanvas
     },
-  name: "ThreeTestVivi",
+  name: "StartScreen",
   static() {
     return {
       camera: {},
