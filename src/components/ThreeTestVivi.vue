@@ -4,9 +4,11 @@
     <source src="@/assets/sintel.mp4" type='video/mp4; codecs="avc1.42E01E, mp4a.40.2"' />
   <start-text-wall cssID="real" text="real"/>
   <start-text-wall cssID="fake" text="fake"/>
+  <!-- <start-text-plane cssID="floor"/>
+  <start-text-plane cssID="ceiling"/> -->
+  <start-plane-canvas/>
 
-  <start-text-plane cssID="floor"/>
-  <start-text-plane cssID="ceiling"/>
+
   </video>
 </template>
 
@@ -21,10 +23,15 @@ import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer
 import StartTextWall from './StartTextWall.vue';
 import StartTextPlane from './StartTextPlane.vue';
 import { Object3D } from 'three';
+import StartPlaneCanvas from './StartPlaneCanvas.vue';
 
 
 export default {
-  components: {StartTextWall, StartTextPlane},
+  components: {
+    StartTextWall, 
+    // StartTextPlane, 
+    StartPlaneCanvas
+    },
   name: "ThreeTestVivi",
   static() {
     return {
@@ -91,33 +98,65 @@ export default {
       this.sceneCSS = new THREE.Scene();
 
 
-    const room = new Object3D();
+    const walls = new Object3D();
 
     const wallReal = new CSS3DObject(document.getElementById("real"));
     wallReal.position.set(0, 0, 500);
     wallReal.rotation.y = this.deg2rad(90);
-    room.add(wallReal);
+    walls.add(wallReal);
 
     const wallFake = new CSS3DObject(document.getElementById("fake"));
     wallFake.position.set(500, 0, 0);
-    room.add(wallFake);
+    walls.add(wallFake);
 
-    const floor = new CSS3DObject(document.getElementById("floor"));
+    walls.scale.set(0.001, 0.001, 0.001);
+    walls.position.set(0,0, 0);
+    walls.rotation.y = this.deg2rad(-45);
+    this.sceneCSS.add(walls)
+
+    // const floor = new CSS3DObject(document.getElementById("floor"));
+    // floor.rotation.x = this.deg2rad(-90);
+    // floor.position.set(500,-200, 500);
+    // walls.add(floor);
+
+    // const ceiling = new CSS3DObject(document.getElementById("ceiling"));
+    // ceiling.rotation.x = this.deg2rad(90);
+    // ceiling.position.set(500,200, 500);
+    // walls.add(ceiling);
+
+    const planes = new Object3D();
+
+    const canvas = document.getElementById("text-canvas");
+    const texture = new THREE.CanvasTexture(canvas);
+    texture.minFilter = THREE.LinearFilter
+
+
+    const geometry = new THREE.PlaneBufferGeometry(1, 1);
+    const material = new THREE.MeshBasicMaterial( {map: texture, side: THREE.DoubleSide} );
+    const floor = new THREE.Mesh(geometry, material)
     floor.rotation.x = this.deg2rad(-90);
-    floor.position.set(500,-200, 500);
-    room.add(floor);
+    floor.position.set(0.5,-0.2, 0.5);
+    planes.add(floor);
+    
 
-    const ceiling = new CSS3DObject(document.getElementById("ceiling"));
+    const ceiling = new THREE.Mesh(geometry, material)
     ceiling.rotation.x = this.deg2rad(90);
-    ceiling.position.set(500,200, 500);
-    room.add(ceiling);
+    ceiling.position.set(0.5,0.2, 0.5);
+    planes.add(ceiling);
 
+    planes.rotation.y = this.deg2rad(-45);
+    this.sceneGL.add(planes);
+    
 
+    // const ceiling = new CSS3DObject(document.getElementById("ceiling"));
+    // ceiling.rotation.x = this.deg2rad(90);
+    // ceiling.position.set(500,200, 500);
+    // walls.add(ceiling);
 
-    room.scale.set(0.001, 0.001, 0.001);
-    room.position.set(0,0, 0);
-    room.rotation.y = this.deg2rad(-45);
-    this.sceneCSS.add(room)
+    // const cube = this.createCube();
+    // this.sceneGL.add(cube);
+
+   
 
       
 
@@ -145,6 +184,11 @@ export default {
     deg2rad(deg){
         return deg * (Math.PI/180);
     },
+    createCube() {
+      const geometry = new THREE.BoxBufferGeometry(0.04, 0.04, 0.04);
+      const material = new THREE.MeshBasicMaterial();
+      return new THREE.Mesh(geometry, material);
+    },
   },
   mounted() {
     this.init();
@@ -162,7 +206,7 @@ export default {
   width: 100vw;
   height: 100vh;
 
-  // pointer-events: none;
+  pointer-events: none;
 
   canvas{
     width: 100%;

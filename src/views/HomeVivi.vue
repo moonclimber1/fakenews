@@ -1,8 +1,8 @@
 <template>
   <div class="home">
-    <!-- <moving-circle/> -->
-    <three-test-vivi/>
-     <!-- <three-test />  -->
+    <moving-circle />
+    <three-test-vivi />
+    <!-- <three-test />  -->
     <!-- <text-layer/>  -->
   </div>
 </template>
@@ -11,9 +11,9 @@
 // import ThreeTest from "../components/ThreeTest.vue";
 // import ThreeTestVivi from "../components/ThreeTestVivi.vue";
 import MovingCircle from "../components/MovingCircle";
-import StartTextWall from '../components/StartTextWall.vue';
-import TextLayer from '../components/TextLayer.vue';
-import ThreeTestVivi from '../components/ThreeTestVivi.vue';
+import StartTextWall from "../components/StartTextWall.vue";
+import TextLayer from "../components/TextLayer.vue";
+import ThreeTestVivi from "../components/ThreeTestVivi.vue";
 
 // @ is an alias to /src
 // import HelloWorld from '@/components/HelloWorld.vue'
@@ -22,7 +22,7 @@ export default {
   name: "Home",
   components: {
     // ThreeTest,
-    // MovingCircle,
+    MovingCircle,
     // StartTextWall,
     ThreeTestVivi,
     // TextLayer,
@@ -30,5 +30,4 @@ export default {
 };
 </script>
 
-<style lang="scss">
-</style>
+<style lang="scss"></style>

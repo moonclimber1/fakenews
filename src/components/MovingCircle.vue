@@ -21,11 +21,11 @@ export default {
 <style lang="scss" scoped>
 .circle {
   position: fixed;
-  top: -10vw;
-  left: -10vw;
+  top: -12vw;
+  left: -12vw;
 
-  width: 20vw;
-  height: 20vw;
+  width: 24vw;
+  height: 24vw;
   border-radius: 50%;
 
   background: #46d8bd;
