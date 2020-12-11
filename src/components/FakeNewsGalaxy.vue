@@ -177,7 +177,7 @@ export default {
       // object.scale.set(0.001, 0.001, 0.001);
       // this.sceneCSS.add(object);
 
-      const theodorus = this.getTheodorus(132, 0.6);
+      const theodorus = this.getTheodorus(124, 0.6);
       theodorus.shift();
       const pointArray = [new THREE.Vector3(5.5, -3.5, 9), ...theodorus];
       this.cameraAnimationPath = new THREE.CatmullRomCurve3(pointArray);
