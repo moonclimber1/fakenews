@@ -56,7 +56,6 @@ export default {
   data() {
     return {
       questions: [
-        "Question everything!",
         "Do you see a pattern?",
         "How is the game played?",
         "Do not trust the media.",
@@ -68,9 +67,16 @@ export default {
         "Why do you believe what you believe?",
         "Whould you be able to recognize “them” decieving you?",
         "What really happened during WWII ?",
-        "",
-        "What is your truth?"
-
+        "Why is this relevant?",
+        "How do you 'show' the public the truth?",
+        "Follow the white rabbit",
+        "Do you get it? They are afraid of you!",
+        "What if entertainment was more than just entertainment?",
+        "Enjoy the show",
+        "Why are they protected?",
+        "Nothing is random",
+        "Do you see what happened",
+        "Why are we being censored?"
       ],
     };
   },
@@ -140,8 +146,8 @@ export default {
       // this.controls.panSpeed = 4.0;
 
       // Setup stats
-      this.stats = new Stats();
-      document.body.appendChild(this.stats.dom);
+      // this.stats = new Stats();
+      // document.body.appendChild(this.stats.dom);
 
       this.cursor = { x: 0, y: 0 };
       const self = this;
@@ -171,9 +177,6 @@ export default {
       // object.scale.set(0.001, 0.001, 0.001);
       // this.sceneCSS.add(object);
 
-      const textSpiral = this.createTextSpiral();
-      this.sceneCSS.add(textSpiral);
-
       const theodorus = this.getTheodorus(132, 0.6);
       theodorus.shift();
       const pointArray = [new THREE.Vector3(5.5, -3.5, 9), ...theodorus];
@@ -182,6 +185,9 @@ export default {
       // const material = new MeshBasicMaterial();
       // var tube = new THREE.Mesh(geometry, material);
       // this.sceneGL.add(tube)
+
+      const textSpiral = this.createTextSpiral();
+      this.sceneCSS.add(textSpiral);
 
       this.cameraTween = { val: 1 };
 
@@ -259,6 +265,7 @@ export default {
     },
     createVideoMaterial(id) {
       const video = document.getElementById(id);
+      video.volume = 0.1;
       video.play();
       const videoTexture = new THREE.VideoTexture(video);
       return new THREE.MeshBasicMaterial({ map: videoTexture });
@@ -336,44 +343,45 @@ export default {
     },
     createTextSpiral() {
       const spiral = new Object3D();
-      let points = this.getTheodorus(140, 0.6).map(point => point.multiplyScalar(1.02));
 
-      let nr = 0
+      const theodorus = this.getTheodorus(140, 0.6);
+      const pointArray = [...theodorus];
+      const textPath = new THREE.CatmullRomCurve3(pointArray);
 
-      points.forEach((point, index) => {
+
+      let offset = 0.04;
+      let nr = 0;
+      let lookAt;
+      const stepSize = (1 - offset) / this.questions.length;
+      for (let val = offset; val < 1; val += stepSize) {
         const spiralPoint = new THREE.Object3D();
+        const point = textPath.getPointAt(val);
         spiralPoint.position.set(point.x, point.y, point.z);
 
-        if (index >= 0 && index < points.length - 1) {
-          const nextPoint = points[index + 1];
-          spiralPoint.lookAt(nextPoint);
-          spiralPoint.up.set(0, 0, 1);
+        lookAt = textPath.getPointAt(val + 0.0001);
+        spiralPoint.lookAt(lookAt);
+        spiralPoint.up.set(0, 0, 1);
+
+        const textLayer = document.getElementById("text" + nr);
+        const object = new CSS3DObject(textLayer);
+        object.rotation.y = this.deg2rad(180);
+        object.rotation.z = this.deg2rad(90);
+        object.scale.set(0.0012, 0.0012, 0.0012);
+
+        if (point.y < 0) {
+          object.rotation.z = this.deg2rad(270);
         }
 
-        if (index % 10 == 6) {
-          
-          // CSS 3D Object
-          const textLayer = document.getElementById("text" + nr);
-          const object = new CSS3DObject(textLayer);
-          object.rotation.y = this.deg2rad(180);
-          object.rotation.z = this.deg2rad(90);
-          object.scale.set(0.0012, 0.0012, 0.0012);
-
-          if(point.y<0){
-            object.rotation.z = this.deg2rad(270);
-            // object.rotation.y = this.deg2rad(180);
-          }
-
-          if(nr == this.questions.length-1){
-            object.scale.set(0.004, 0.004, 0.004);
-          }
-
-          spiralPoint.add(object);
-          spiral.add(spiralPoint);
-
-          nr++
+        if (nr == this.questions.length - 1) {
+          object.scale.set(0.004, 0.004, 0.004);
+          console.log("Big Text");
         }
-      });
+
+        spiralPoint.add(object);
+        spiral.add(spiralPoint);
+
+        nr++;
+      }
       return spiral;
     },
     createRandomCubesInSphere(radius, n) {
@@ -410,8 +418,6 @@ export default {
       this.sceneGL.rotation.x = xTilt;
       this.sceneCSS.rotation.x = xTilt;
 
-
-
       // const up = new Vector3(0,0,1)
       // const desiredYTilt = ((this.cursor.x / window.innerWidth) * 2 - 1) * this.deg2rad(2);
       // // const desiredTiltVec = new Object3D().rotateOnWorldAxis(p2, yTilt)
@@ -432,7 +438,7 @@ export default {
       // this.controls.update();
       this.composerGL.render();
       this.rendererCSS.render(this.sceneCSS, this.camera);
-      this.stats.update();
+      // this.stats.update();
 
       // console.log("🚀 ~ file: FakeNewsGalaxy.vue ~ line 254 ~ this.camera.position", this.camera.position)
     },
@@ -447,6 +453,14 @@ export default {
     deg2rad(deg) {
       return deg * (Math.PI / 180);
     },
+  },
+  created(){
+    // Shuffle
+    this.questions = this.questions.sort(() => 0.5 - Math.random());
+    // Select 10 items
+    this.questions = this.questions.slice(0, 10);
+
+    this.questions = ["Question everything!", ...this.questions , "" ,"What is your truth?"]
   },
   mounted() {
     this.init();
@@ -471,7 +485,7 @@ canvas {
   width: 100vw;
   height: 100vh;
 
-  // pointer-events: none;
+  pointer-events: none;
 
   canvas {
     width: 100%;
