@@ -76,7 +76,7 @@ export default {
         "Why are they protected?",
         "Nothing is random",
         "Do you see what happened",
-        "Why are we being censored?"
+        "Why are we being censored?",
       ],
     };
   },
@@ -95,6 +95,7 @@ export default {
       cameraTween: {},
       cursor: {},
       tilt: {},
+      videos3D: [],
     };
   },
   props: {},
@@ -159,6 +160,8 @@ export default {
     createScene: function() {
       this.sceneGL = new THREE.Scene();
       this.sceneCSS = new THREE.Scene();
+
+      this.videos3D = [];
 
       const spiral = this.createSpiral();
       this.sceneGL.add(spiral);
@@ -230,16 +233,27 @@ export default {
 
       // Create inner Video Mesh
       const geometry = new THREE.SphereBufferGeometry(0.2, 4, 2);
-      const material = this.createVideoMaterial(this.getRandomVideoId());
+      const video = document.getElementById(this.getRandomVideoId());
+      const material = this.createVideoMaterial(video);
       // const material = new THREE.MeshPhongMaterial({ color: 0xcccccc, flatShading: true });
       const videoMesh = new THREE.Mesh(geometry, material);
       videoMesh.rotation.x = this.deg2rad(90);
       videoMesh.rotation.y = this.deg2rad(180);
-
       diamond.add(videoMesh);
       diamond.add(this.createEdgesMesh(geometry));
-
+      this.addVideo3D(video, diamond);
       return diamond;
+    },
+    addVideo3D(video, obj) {
+      const index = this.videos3D.findIndex((vid3D) => vid3D.video == video);
+      if (index >= 0) {
+        this.videos3D[index].objects.push(obj);
+      } else {
+        this.videos3D.push({
+          video: video,
+          objects: [obj],
+        });
+      }
     },
     createCube() {
       const geometry = new THREE.BoxBufferGeometry(0.04, 0.04, 0.04);
@@ -250,21 +264,21 @@ export default {
     createVideoCube: function() {
       const cube = new THREE.Object3D();
       const geometry = new THREE.BoxBufferGeometry(0.2, 0.2, 0.2);
-      const material = this.createVideoMaterial(this.getRandomVideoId());
+      const video = document.getElementById(this.getRandomVideoId());
+      const material = this.createVideoMaterial(video);
       const videoMesh = new THREE.Mesh(geometry, material);
       cube.add(videoMesh);
       cube.add(this.createEdgesMesh(geometry));
-
       cube.rotation.y = this.deg2rad(90);
       cube.rotation.z = this.deg2rad(90);
+      this.addVideo3D(video, cube);
       return cube;
     },
     getRandomVideoId() {
       const videoNr = Math.floor(Math.random() * 11) + 1;
       return "video" + videoNr;
     },
-    createVideoMaterial(id) {
-      const video = document.getElementById(id);
+    createVideoMaterial(video) {
       video.volume = 0.1;
       video.play();
       const videoTexture = new THREE.VideoTexture(video);
@@ -348,7 +362,6 @@ export default {
       const pointArray = [...theodorus];
       const textPath = new THREE.CatmullRomCurve3(pointArray);
 
-
       let offset = 0.04;
       let nr = 0;
       let lookAt;
@@ -374,7 +387,6 @@ export default {
 
         if (nr == this.questions.length - 1) {
           object.scale.set(0.004, 0.004, 0.004);
-          console.log("Big Text");
         }
 
         spiralPoint.add(object);
@@ -402,12 +414,14 @@ export default {
     animate: function(now) {
       requestAnimationFrame(this.animate);
 
+      // Camera Animation
       const p1 = this.cameraAnimationPath.getPointAt(this.cameraTween.val);
       const p2 = this.cameraAnimationPath.getPointAt(this.cameraTween.val + 0.0001);
       this.camera.position.set(p1.x, p1.y, p1.z);
       this.camera.lookAt(p2);
       this.camera.up.set(0, 0, 1);
 
+      // Scene Tilting
       const desiredYTilt = ((this.cursor.x / window.innerWidth) * 2 - 1) * this.deg2rad(4);
       const yTilt = THREE.MathUtils.lerp(this.sceneGL.rotation.y, desiredYTilt, 0.04);
       this.sceneGL.rotation.y = yTilt;
@@ -417,6 +431,19 @@ export default {
       const xTilt = THREE.MathUtils.lerp(this.sceneGL.rotation.x, desiredXTilt, 0.04);
       this.sceneGL.rotation.x = xTilt;
       this.sceneCSS.rotation.x = xTilt;
+
+      // 3D Sound
+      this.videos3D.forEach((vid3D) => {
+        let volume = 0;
+        vid3D.objects.forEach((obj) => {
+          const squareDist = obj.getWorldPosition(new THREE.Vector3()).distanceToSquared(this.cameraAnimationPath.getPointAt(this.cameraTween.val + 0.005));
+          const newVolume = (1/(squareDist)) * 0.1
+          if(newVolume > volume){
+            volume = newVolume
+          }
+        });
+        vid3D.video.volume =  this.limit(volume, 0,1)
+      });
 
       // const up = new Vector3(0,0,1)
       // const desiredYTilt = ((this.cursor.x / window.innerWidth) * 2 - 1) * this.deg2rad(2);
@@ -453,14 +480,17 @@ export default {
     deg2rad(deg) {
       return deg * (Math.PI / 180);
     },
+    limit(val, min, max){
+      return val < min ? min : (val > max ? max : val);
+    }
   },
-  created(){
+  created() {
     // Shuffle
     this.questions = this.questions.sort(() => 0.5 - Math.random());
     // Select 10 items
     this.questions = this.questions.slice(0, 10);
-
-    this.questions = ["Question everything!", ...this.questions , "" ,"What is your truth?"]
+    // Add beginning and end
+    this.questions = ["Question everything!", ...this.questions, "", "What is your truth?"];
   },
   mounted() {
     this.init();

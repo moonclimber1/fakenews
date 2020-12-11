@@ -1,7 +1,6 @@
 <template>
   <div class="textLayer" :id="cssId">
-
-   <p> {{ question }}</p> 
+    <p>{{ question }}</p>
   </div>
 </template>
 
@@ -9,8 +8,8 @@
 export default {
   name: "TextLayer",
   props: {
-    question: Array,
-    cssId: String
+    question: String,
+    cssId: String,
   },
   mounted() {},
   methods: {},
@@ -18,7 +17,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-
 .textLayer {
   //background-color: red;
   width: 1200px;
@@ -34,37 +32,31 @@ export default {
 
   color: white;
 
-
-  p{
+  p {
     display: table-cell;
     vertical-align: middle;
-    text-shadow:0px 0px blue;
+    text-shadow: 0px 0px blue;
 
-    &:hover{
+    &:hover {
+      @keyframes ani {
+        0% {
+          text-shadow: 0px 0px rgb(50, 200, 200);
+        }
+        25% {
+          text-shadow: 3px 3px;
+        }
+        50% {
+          text-shadow: 3px -3px;
+        }
+        75% {
+          text-shadow: -3px -3px pink;
+        }
+        100% {
+          text-shadow: -3px 3px rgb(100, 230, 210);
+        }
+      }
 
-@keyframes ani {
-
-0%{
-text-shadow:0px 0px rgb(50, 200,200);
-}
-25%{
-text-shadow:3px 3px;
-}
-50%{
-text-shadow:3px -3px;
-}
-75%{
-text-shadow:-3px -3px  pink;
-}
-100%{
-text-shadow:-3px 3px rgb(100, 230,210);
-}
-
-}
-      
-      animation: ani 0.3s infinite cubic-bezier(.25, .46, .45, .94) both;
-      
-
+      animation: ani 0.2s infinite cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
     }
   }
 }
