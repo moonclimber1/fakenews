@@ -53,7 +53,6 @@ export default {
       this.container = document.getElementById("canvas-wrapper");
       this.camera = new THREE.PerspectiveCamera(70, this.container.clientWidth / this.container.clientHeight, 0.01, 10);
       this.camera.position.z = 1.25;
-      console.log("🚀 ~ file: StartScreen.vue ~ line 57 ~ this.camera.position", this.camera.position)
 
       // Set up Scene
       this.createScene();
@@ -149,7 +148,7 @@ export default {
 
     
     const tl = gsap.timeline()
-    tl.from(this.camera.position, {duration: 4, z: 20, ease: "power4.out"})
+    tl.from(this.camera.position, {duration: 5, z: 20, ease: "power4.out"})
     
     this.cursor = {x:0, y:0}
     const self = this
@@ -169,12 +168,12 @@ export default {
       // this.controls.update();
 
 
-      const desiredYTilt = ((this.cursor.x / window.innerWidth) * 2 - 1) * this.deg2rad(7)
+      const desiredYTilt = ((this.cursor.x / window.innerWidth) * 2 - 1) * this.deg2rad(9)
       const yTilt = THREE.MathUtils.lerp(this.sceneGL.rotation.y, desiredYTilt, 0.04)
       this.sceneGL.rotation.y = yTilt
       this.sceneCSS.rotation.y = yTilt
 
-      const desiredXTilt = ((this.cursor.y / window.innerHeight) * 2 - 1) * this.deg2rad(3)
+      const desiredXTilt = ((this.cursor.y / window.innerHeight) * 2 - 1) * this.deg2rad(5)
       const xTilt = THREE.MathUtils.lerp(this.sceneGL.rotation.x, desiredXTilt, 0.04)
       this.sceneGL.rotation.x = xTilt
       this.sceneCSS.rotation.x = xTilt

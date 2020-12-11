@@ -1,6 +1,5 @@
 <template>
   <div class="startTextWall" :id="cssID">
-    
     <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
       <filter id="distort" x="0%" y="0%" width="120%" height="120%">
         <feOffset result="offOut" in="SourceGraphic" dx="0" dy="4">
@@ -35,7 +34,7 @@
             dur="1s"
             repeatCount="indefinite"
           ></animate>
-         </feColorMatrix>
+        </feColorMatrix>
 
         <feBlend in="SourceGraphic" in2="RED" mode="normal" result="SHADOW" />
 
@@ -54,18 +53,13 @@
         <feDisplacementMap in2="NOISE" in="SHADOW" scale="20" xChannelSelector="R" yChannelSelector="G"></feDisplacementMap>
       </filter>
 
-       <filter id="displace" x="0%" y="0%" width="120%" height="120%">
-
-      
-      <feDisplacementMap in="SourceGraphics" scale="20">
-
-      </feDisplacementMap>
-
-       </filter>
-<a href="Home.vue">
-      <text x="50%" y="81%" dy="0" dx="0" fill="white">
-        {{ text }}
-      </text>
+      <filter id="displace" x="0%" y="0%" width="120%" height="120%">
+        <feDisplacementMap in="SourceGraphics" scale="20"></feDisplacementMap>
+      </filter>
+      <a href="/#/universe/" @click="goFullscreen">
+        <text x="50%" y="81%" dy="0" dx="0" fill="white">
+          {{ text }}
+        </text>
       </a>
     </svg>
   </div>
@@ -79,7 +73,12 @@ export default {
     text: String,
   },
   mounted() {},
-  methods: {},
+  methods: {
+    goFullscreen(){
+      console.log("wanna go fullscreen");
+      //  document.documentElement.requestFullscreen();
+    }
+  },
 };
 </script>
 
@@ -94,27 +93,15 @@ export default {
   text-anchor: middle;
   text-transform: uppercase;
   text-align: center;
-  
-  
 
   svg {
-    background-color:black;
+    background-color: black;
 
-     text:hover{
-
-
-
-           filter: url(#distort);
-           transform:translate(0, -6px);
-    text-decoration: underline white;
-
-       } 
-
-  
+    text:hover {
+      filter: url(#distort);
+      transform: translate(0, -6px);
+      text-decoration: underline white;
+    }
   }
-
-
- 
-
 }
 </style>

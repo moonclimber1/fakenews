@@ -1,23 +1,19 @@
 <template>
   <div class="home">
     <moving-circle />
-    <start-screen/>
-    
+    <fake-news-galaxy />
   </div>
 </template>
 
 <script>
-
 import MovingCircle from "../components/MovingCircle";
-import StartScreen from '../components/StartScreen.vue';
-
-
+import FakeNewsGalaxy from "../components/FakeNewsGalaxy.vue";
 
 export default {
-  name: "Home",
+  name: "Universe",
   components: {
+    FakeNewsGalaxy,
     MovingCircle,
-    StartScreen,
   },
 };
 </script>

@@ -16,6 +16,11 @@ const routes = [
     path: '/home-vivi',
     name: 'Home Vivi',
     component: () => import('../views/HomeVivi.vue')
+  },
+  {
+    path: '/universe',
+    name: 'Universe',
+    component: () => import('../views/Universe.vue')
   }
 ]
 
