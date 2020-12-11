@@ -33,7 +33,7 @@
   <video id="video11" loop crossOrigin="anonymous" playsinline style="display:none">
     <source src="@/assets/videos/clip_11.mp4" type="video/mp4" />
   </video>
-  <text-layer />
+  <text-layer :question="question" :cssId="'text' + index" v-for="(question, index) in questions" :key="index" />
 </template>
 
 <script>
@@ -53,6 +53,27 @@ import ScrollTrigger from "gsap/ScrollTrigger";
 export default {
   components: { TextLayer },
   name: "FakeNewsGalaxy",
+  data() {
+    return {
+      questions: [
+        "Question everything!",
+        "Do you see a pattern?",
+        "How is the game played?",
+        "Do not trust the media.",
+        "System of control?",
+        "What if the people in charge didnt have our best interests in mind?",
+        "Who is influencing our media?",
+        "Are you really free?",
+        "Don't believe everything you read.",
+        "Why do you believe what you believe?",
+        "Whould you be able to recognize “them” decieving you?",
+        "What really happened during WWII ?",
+        "",
+        "What is your truth?"
+
+      ],
+    };
+  },
   static() {
     return {
       camera: {},
@@ -136,21 +157,30 @@ export default {
       const spiral = this.createSpiral();
       this.sceneGL.add(spiral);
 
-      // CSS 3D Object
-      const textLayer = document.getElementById("textLayer");
-      const object = new CSS3DObject(textLayer);
-      object.position.set(0, 0, -0.3);
-      object.rotation.y = 0;
-      object.scale.set(0.001, 0.001, 0.001);
-      this.sceneCSS.add(object);
+      // Nullpunkt Cube
+      // const geometry = new THREE.BoxBufferGeometry(0.04, 0.04, 0.04);
+      // const material = new MeshBasicMaterial({color: 0x05FF00});
+      // // const material = new THREE.MeshPhongMaterial({ color: 0xcccccc, flatShading: true });
+      // this.sceneGL.add(new THREE.Mesh(geometry, material));
 
-      const theodorus = this.getTheodorus(120, 0.6);
+      // CSS 3D Object
+      // const textLayer = document.getElementById("textLayer");
+      // const object = new CSS3DObject(textLayer);
+      // object.position.set(0, 0, 0);
+      // object.rotation.y = 0;
+      // object.scale.set(0.001, 0.001, 0.001);
+      // this.sceneCSS.add(object);
+
+      const textSpiral = this.createTextSpiral();
+      this.sceneCSS.add(textSpiral);
+
+      const theodorus = this.getTheodorus(132, 0.6);
       theodorus.shift();
       const pointArray = [new THREE.Vector3(5.5, -3.5, 9), ...theodorus];
       this.cameraAnimationPath = new THREE.CatmullRomCurve3(pointArray);
-      const geometry = new THREE.TubeGeometry(this.cameraAnimationPath, 1024, 0.01, 12, false);
-      const material = new MeshBasicMaterial();
-      var tube = new THREE.Mesh(geometry, material);
+      // const geometry = new THREE.TubeGeometry(this.cameraAnimationPath, 1024, 0.01, 12, false);
+      // const material = new MeshBasicMaterial();
+      // var tube = new THREE.Mesh(geometry, material);
       // this.sceneGL.add(tube)
 
       this.cameraTween = { val: 1 };
@@ -172,22 +202,22 @@ export default {
 
       tl.from(this.cameraTween, { duration: 100, val: 0 });
 
-      const listener = new THREE.AudioListener();
-      this.camera.add(listener);
+      // const listener = new THREE.AudioListener();
+      // this.camera.add(listener);
 
-      // create the PositionalAudio object (passing in the listener)
-      const sound = new THREE.PositionalAudio(listener);
+      // // create the PositionalAudio object (passing in the listener)
+      // const sound = new THREE.PositionalAudio(listener);
 
-      // load a sound and set it as the PositionalAudio object's buffer
-      const audioLoader = new THREE.AudioLoader();
-      audioLoader.load("../assets/music.mp3", function(buffer) {
-        console.log("🚀 ~ file: FakeNewsGalaxy.vue ~ line 154 ~ audioLoader.load ~ buffer", buffer);
-        sound.setBuffer(buffer);
-        sound.setRefDistance(20);
-        sound.play();
-      });
-      // console.log("🚀 ~ file: FakeNewsGalaxy.vue ~ line 157 ~ sound", sound)
-      spiral.add(sound);
+      // // load a sound and set it as the PositionalAudio object's buffer
+      // const audioLoader = new THREE.AudioLoader();
+      // audioLoader.load("../assets/music.mp3", function(buffer) {
+      //   console.log("🚀 ~ file: FakeNewsGalaxy.vue ~ line 154 ~ audioLoader.load ~ buffer", buffer);
+      //   sound.setBuffer(buffer);
+      //   sound.setRefDistance(20);
+      //   sound.play();
+      // });
+      // // console.log("🚀 ~ file: FakeNewsGalaxy.vue ~ line 157 ~ sound", sound)
+      // spiral.add(sound);
     },
     createVideoDiamond: function() {
       const diamond = new THREE.Object3D();
@@ -197,10 +227,6 @@ export default {
       const material = this.createVideoMaterial(this.getRandomVideoId());
       // const material = new THREE.MeshPhongMaterial({ color: 0xcccccc, flatShading: true });
       const videoMesh = new THREE.Mesh(geometry, material);
-
-      // videoMesh.rotation.x = this.deg2rad(90)
-
-      // videoMesh.rotation.y = this.deg2rad(90)
       videoMesh.rotation.x = this.deg2rad(90);
       videoMesh.rotation.y = this.deg2rad(180);
 
@@ -227,9 +253,9 @@ export default {
       cube.rotation.z = this.deg2rad(90);
       return cube;
     },
-    getRandomVideoId(){
-      const videoNr = Math.floor(Math.random() * 11)+1
-      return "video"+videoNr
+    getRandomVideoId() {
+      const videoNr = Math.floor(Math.random() * 11) + 1;
+      return "video" + videoNr;
     },
     createVideoMaterial(id) {
       const video = document.getElementById(id);
@@ -276,9 +302,8 @@ export default {
     },
     createSpiral() {
       const spiral = new Object3D();
-      console.log("BEFORE");
       let points = this.getTheodorus(120, 0.6);
-      console.log("AFTER");
+
       points.forEach((point, index) => {
         const spiralPoint = new THREE.Object3D();
         spiralPoint.position.set(point.x, point.y, point.z);
@@ -306,6 +331,48 @@ export default {
 
         spiralPoint.add(cubeSphere);
         spiral.add(spiralPoint);
+      });
+      return spiral;
+    },
+    createTextSpiral() {
+      const spiral = new Object3D();
+      let points = this.getTheodorus(140, 0.6).map(point => point.multiplyScalar(1.02));
+
+      let nr = 0
+
+      points.forEach((point, index) => {
+        const spiralPoint = new THREE.Object3D();
+        spiralPoint.position.set(point.x, point.y, point.z);
+
+        if (index >= 0 && index < points.length - 1) {
+          const nextPoint = points[index + 1];
+          spiralPoint.lookAt(nextPoint);
+          spiralPoint.up.set(0, 0, 1);
+        }
+
+        if (index % 10 == 6) {
+          
+          // CSS 3D Object
+          const textLayer = document.getElementById("text" + nr);
+          const object = new CSS3DObject(textLayer);
+          object.rotation.y = this.deg2rad(180);
+          object.rotation.z = this.deg2rad(90);
+          object.scale.set(0.0012, 0.0012, 0.0012);
+
+          if(point.y<0){
+            object.rotation.z = this.deg2rad(270);
+            // object.rotation.y = this.deg2rad(180);
+          }
+
+          if(nr == this.questions.length-1){
+            object.scale.set(0.004, 0.004, 0.004);
+          }
+
+          spiralPoint.add(object);
+          spiral.add(spiralPoint);
+
+          nr++
+        }
       });
       return spiral;
     },
@@ -342,6 +409,8 @@ export default {
       const xTilt = THREE.MathUtils.lerp(this.sceneGL.rotation.x, desiredXTilt, 0.04);
       this.sceneGL.rotation.x = xTilt;
       this.sceneCSS.rotation.x = xTilt;
+
+
 
       // const up = new Vector3(0,0,1)
       // const desiredYTilt = ((this.cursor.x / window.innerWidth) * 2 - 1) * this.deg2rad(2);
