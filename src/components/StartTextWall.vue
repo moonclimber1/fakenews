@@ -1,15 +1,16 @@
 <template>
   <div class="startTextWall" :id="cssID">
+    
     <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
       <filter id="distort" x="0%" y="0%" width="120%" height="120%">
-        <feOffset result="offOut" in="SourceGraphic" dx="2" dy="2">
+        <feOffset result="offOut" in="SourceGraphic" dx="0" dy="4">
           <animate
             id="shadowAnimate"
             attributeName="dx"
-            values="0;2;0;-2;0"
+            values="0;5;0;-5;0"
             from="0"
             to="100"
-            dur="0.2s"
+            dur="1s"
             repeatCount="indefinite"
           ></animate>
         </feOffset>
@@ -31,7 +32,7 @@
             from="  2 0 0 0 0 0 0 0 0 0 0 0 .3 0 0 0 0 0 1 0"
             to=" 2 0 0 0 0 0 0 0 0 0 0 0 .3 0 0 0 0 0 1 0"
             values=" 2 0 0 0 0 0 0 0 0 0 0 0 .3 0 0 0 0 0 1 0; 0.16 0 0 0 0 0 0.9 0 0 0 0 0 0.58 0 0 0 0 0 1 0; 2 0 0 0 0 0 0 0 0 0 0 0 .3 0 0 0 0 0 1 0;"
-            dur=".4s"
+            dur="1s"
             repeatCount="indefinite"
           ></animate>
          </feColorMatrix>
@@ -42,7 +43,7 @@
           <animate
             id="noiseAnimate"
             attributeName="baseFrequency"
-            values="2.5;2.7"
+            values="3.2;3.4;3.2"
             from="0"
             to="50"
             dur="10s"
@@ -50,12 +51,22 @@
           ></animate>
         </feTurbulence>
 
-        <feDisplacementMap in2="NOISE" in="SHADOW" scale="20"></feDisplacementMap>
+        <feDisplacementMap in2="NOISE" in="SHADOW" scale="20" xChannelSelector="R" yChannelSelector="G"></feDisplacementMap>
       </filter>
 
-      <text x="45%" y="80%" dy="0" fill="white">
+       <filter id="displace" x="0%" y="0%" width="120%" height="120%">
+
+      
+      <feDisplacementMap in="SourceGraphics" scale="20">
+
+      </feDisplacementMap>
+
+       </filter>
+<a href="Home.vue">
+      <text x="50%" y="81%" dy="0" dx="0" fill="white">
         {{ text }}
       </text>
+      </a>
     </svg>
   </div>
 </template>
@@ -84,13 +95,26 @@ export default {
   text-transform: uppercase;
   text-align: center;
   
+  
 
   svg {
     background-color:black;
+
+     text:hover{
+
+
+
+           filter: url(#distort);
+           transform:translate(0, -6px);
+    text-decoration: underline white;
+
+       } 
+
+  
   }
 
-  svg text:hover {
-    filter: url(#distort);
-  }
+
+ 
+
 }
 </style>
