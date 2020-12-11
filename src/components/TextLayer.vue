@@ -89,7 +89,6 @@ repeatCount="indefinite"
 export default {
   name: "TextLayer",
   props: {},
-  data() {},
   mounted() {},
   methods: {},
 };

@@ -1,7 +1,7 @@
 <template>
   <div class="home">
     
-    <!-- <moving-circle /> -->
+    <moving-circle />
     <fake-news-galaxy/>
     <!-- <start-plane-canvas/> -->
    
@@ -25,7 +25,7 @@ export default {
   name: "Home",
   components: {
     FakeNewsGalaxy,
-    // MovingCircle,
+    MovingCircle,
     // StartPlaneCanvas,
 
     

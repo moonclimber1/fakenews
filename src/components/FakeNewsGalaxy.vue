@@ -16,7 +16,9 @@ import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer
 import { UnrealBloomPass } from "three/examples/jsm/postprocessing/UnrealBloomPass.js";
 import { MeshLine, MeshLineMaterial, MeshLineRaycast } from "three.meshline";
 import TextLayer from "./TextLayer.vue";
-import { MeshBasicMaterial, Object3D } from "three";
+import { log, MeshBasicMaterial, Object3D } from "three";
+import { gsap } from "gsap";
+import ScrollTrigger from "gsap/ScrollTrigger";
 
 export default {
   components: { TextLayer },
@@ -29,12 +31,11 @@ export default {
       rendererGL: {},
       composerGL: {},
       controls: {},
-      videoMesh: {},
-      edgesMesh: {},
       container: {},
-      lastTimestamp: {},
       sceneCSS: {},
       rendererCSS: {},
+      cameraAnimationPath: {},
+      cameraTween: {}
     };
   },
   props: {},
@@ -42,7 +43,7 @@ export default {
     init: function() {
       // Set up Camera
       this.container = document.getElementById("canvas-wrapper");
-      this.camera = new THREE.PerspectiveCamera(70, this.container.clientWidth / this.container.clientHeight, 0.01, 100);
+      this.camera = new THREE.PerspectiveCamera(70, this.container.clientWidth / this.container.clientHeight, 0.001, 100);
       this.camera.position.z = 1;
 
       // Set up Scene
@@ -80,10 +81,10 @@ export default {
       window.addEventListener("resize", this.onWindowResize, false);
 
       // Set up trackball controls
-      this.controls = new TrackballControls(this.camera, this.rendererGL.domElement);
-      this.controls.rotateSpeed = 4.0;
-      this.controls.zoomSpeed = 2.0;
-      this.controls.panSpeed = 4.0;
+      // this.controls = new TrackballControls(this.camera, this.rendererGL.domElement);
+      // this.controls.rotateSpeed = 4.0;
+      // this.controls.zoomSpeed = 2.0;
+      // this.controls.panSpeed = 4.0;
 
       // Setup stats
       this.stats = new Stats();
@@ -113,13 +114,31 @@ export default {
       object.scale.set(0.001, 0.001, 0.001);
       this.sceneCSS.add(object);
 
-      // Add light so that we can see something
-      const light1 = new THREE.PointLight(0xffffff, 1);
-      light1.position.set(3, 1, 1);
-      this.sceneGL.add(light1);
-      const light2 = new THREE.PointLight(0xffffff, 0.3);
-      light2.position.set(-3, 1, 1);
-      this.sceneGL.add(light2);
+      const pointArray = [new THREE.Vector3(5.5,-3.5,9),...this.getTheodorus(120, 0.6)]
+      this.cameraAnimationPath =  new THREE.CatmullRomCurve3(pointArray)
+      const geometry = new THREE.TubeGeometry(this.cameraAnimationPath, 1024, 0.01, 12, false);
+      const material = new MeshBasicMaterial();
+      var tube = new THREE.Mesh(geometry, material);
+      // this.sceneGL.add(tube)
+
+
+      this.cameraTween = {val: 1} 
+
+      gsap.registerPlugin(ScrollTrigger);
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: "#canvas-wrapper",
+          start: "top top",
+          end: function (){ return '+='+window.innerHeight*15 + ' bottom'},
+          toggleActions: "restart pause reverse pause",
+          // markers: true,
+          scrub: 1,
+          pin: true,
+        },
+      })
+      
+      tl.from(this.cameraTween, {duration: 100, val: 0 })
+    
     },
     createVideoDiamond: function() {
       const diamond = new THREE.Object3D();
@@ -181,15 +200,6 @@ export default {
       edgesMesh.scale.set(1.4, 1.4, 1.4);
       return edgesMesh;
     },
-    // drawArchimedicSpiral(n, size, turn) {
-    //   const increment = (2 * Math.PI) / n;
-
-    //   for (let a = 0; a < turn * 2 * Math.PI; a += increment) {
-    //     let radius = a * size;
-    //     const x = Math.cos(a) * radius;
-    //     const y = Math.sin(a) * radius;
-    //   }
-    // },
     getTheodorus(segments, len) {
       let result = [];
       let radius = 0;
@@ -206,27 +216,28 @@ export default {
     },
     createSpiral() {
       const spiral = new Object3D();
+      console.log("BEFORE");
       let points = this.getTheodorus(120, 0.6);
+      console.log("AFTER");
       points.forEach((point, index) => {
         const spiralPoint = new THREE.Object3D();
         spiralPoint.position.set(point.x, point.y, point.z);
 
-        if (index % 2 == Math.round(Math.random() - 0.3)) {
+        if (index % 3 == Math.round(Math.random() - 0.3)) {
           const diamond = this.createVideoDiamond();
-          diamond.position.set((Math.random() - 0.5) * 0.5, (Math.random() - 0.5) * 0.5, (Math.random() - 0.5) * 0.5);
+          diamond.position.set((Math.random() - 0.5) * 0.5, (Math.random() - 0.5) * 0.5, (Math.random() - 0.5) * 1.0);
           spiralPoint.add(diamond);
         }
 
-        if (index % 5 == Math.round(Math.random())) {
+        if (index % 7 == Math.round(Math.random()-0.3)) {
           const cube = this.createVideoCube();
-          cube.position.set((Math.random() - 0.5) * 0.7, (Math.random() - 0.5) * 0.7, (Math.random() - 0.5) * 0.7);
+          cube.position.set((Math.random() - 0.5) * 0.7, (Math.random() - 0.5) * 0.7, (Math.random() - 0.5) * 1.2);
           spiralPoint.add(cube);
         }
 
         const cubeSphere = this.createRandomCubesInSphere(0.5, 15);
 
         spiralPoint.add(cubeSphere);
-
         spiral.add(spiralPoint);
       });
       return spiral;
@@ -249,26 +260,20 @@ export default {
     animate: function(now) {
       requestAnimationFrame(this.animate);
 
-      // if(!this.lastTimestamp){this.lastTimestamp = now}
-      // let delta = (now - this.lastTimestamp) / 16.6667;
-      // this.lastTimestamp = now;
+      var p1 = this.cameraAnimationPath.getPointAt(this.cameraTween.val);
+      var p2 = this.cameraAnimationPath.getPointAt(this.cameraTween.val + 0.0001);
+      this.camera.position.set(p1.x, p1.y, p1.z);
+      this.camera.lookAt(p2);
+      this.camera.up.set(0, 0, 1);
 
-      // this.videoMesh.rotation.x = now * 0.0005;
-      // this.videoMesh.rotation.y = now * 0.0008;
-
-      // this.edgesMesh.rotation.x = now * 0.0005;
-      // this.edgesMesh.rotation.y = now * 0.0008;
-
-      // this.sceneGL.rotation.x = now * 0.0005;
-      // this.sceneGL.rotation.y = now * 0.0004;
-      // this.sceneCSS.rotation.x = now * 0.0005;
-      // this.sceneCSS.rotation.y = now * 0.0004;
-
-      this.controls.update();
+      // this.controls.update();
       this.composerGL.render();
       this.rendererCSS.render(this.sceneCSS, this.camera);
-
       this.stats.update();
+      
+      // console.log("🚀 ~ file: FakeNewsGalaxy.vue ~ line 254 ~ this.camera.position", this.camera.position)
+
+      
     },
     onWindowResize: function() {
       this.camera.aspect = this.container.clientWidth / this.container.clientHeight;
