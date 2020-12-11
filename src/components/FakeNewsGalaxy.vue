@@ -471,7 +471,7 @@ canvas {
   width: 100vw;
   height: 100vh;
 
-  // pointer-events: none;
+  pointer-events: none;
 
   canvas {
     width: 100%;
