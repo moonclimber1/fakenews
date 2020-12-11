@@ -416,7 +416,7 @@ export default {
 
       // Camera Animation
       const p1 = this.cameraAnimationPath.getPointAt(this.cameraTween.val);
-      const p2 = this.cameraAnimationPath.getPointAt(this.cameraTween.val + 0.0001);
+      const p2 = this.cameraAnimationPath.getPointAt(this.cameraTween.val + 0.005);
       this.camera.position.set(p1.x, p1.y, p1.z);
       this.camera.lookAt(p2);
       this.camera.up.set(0, 0, 1);
@@ -437,7 +437,7 @@ export default {
         let volume = 0;
         vid3D.objects.forEach((obj) => {
           const squareDist = obj.getWorldPosition(new THREE.Vector3()).distanceToSquared(this.cameraAnimationPath.getPointAt(this.cameraTween.val + 0.005));
-          const newVolume = (1/(squareDist)) * 0.1
+          const newVolume = (1/(squareDist)) * 0.15
           if(newVolume > volume){
             volume = newVolume
           }
