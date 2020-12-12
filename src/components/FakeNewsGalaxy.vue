@@ -341,13 +341,13 @@ export default {
           spiralPoint.up.set(0, 0, 1);
         }
 
-        if (index % 5 == Math.round(Math.random() - 0.3)) {
+        if (index % 5 == Math.round(Math.random() - 0.3) && index > 1) {
           const cube = this.createVideoCube();
           cube.position.set((Math.random() - 0.5) * 0.7, (Math.random() - 0.5) * 0.7, (Math.random() - 0.5) * 1.2);
           spiralPoint.add(cube);
         }
 
-        if (index % 8 == Math.round(Math.random() - 0.3)) {
+        if (index % 8 == Math.round(Math.random() - 0.3) && index > 1) {
           const diamond = this.createVideoDiamond();
           diamond.position.set((Math.random() - 0.5) * 0.5, (Math.random() - 0.5) * 0.5, (Math.random() - 0.5) * 1.0);
           spiralPoint.add(diamond);
@@ -421,7 +421,7 @@ export default {
 
       // Camera Animation
       const p1 = this.cameraAnimationPath.getPointAt(this.cameraTween.val);
-      const p2 = this.cameraAnimationPath.getPointAt(this.cameraTween.val + 0.005);
+      const p2 = this.cameraAnimationPath.getPointAt(this.cameraTween.val + 0.008);
       this.camera.position.set(p1.x, p1.y, p1.z);
       this.camera.lookAt(p2);
       this.camera.up.set(0, 0, 1);
@@ -443,13 +443,13 @@ export default {
         vid3D.objects.forEach((obj) => {
           const squareDist = obj
             .getWorldPosition(new THREE.Vector3())
-            .distanceToSquared(this.cameraAnimationPath.getPointAt(this.cameraTween.val + 0.005));
+            .distanceToSquared(this.cameraAnimationPath.getPointAt(this.cameraTween.val + 0.008));
           const newVolume = (1 / squareDist) * 0.15;
           if (newVolume > volume) {
             volume = newVolume;
           }
         });
-        vid3D.video.volume = this.limit(volume, 0, 1);
+        vid3D.video.volume = this.limit(volume, 0.01, 1);
       });
 
       // const up = new Vector3(0,0,1)
