@@ -65,7 +65,7 @@ export default {
         "Are you really free?",
         "Don't believe everything you read.",
         "Why do you believe what you believe?",
-        "Whould you be able to recognize “them” decieving you?",
+        "Would you be able to recognize “them” decieving you?",
         "What really happened during WWII ?",
         "Why is this relevant?",
         "How do you 'show' the public the truth?",
@@ -77,6 +77,7 @@ export default {
         "Nothing is random",
         "Do you see what happened",
         "Why are we being censored?",
+        "The calm before the storm"
       ],
     };
   },
@@ -156,6 +157,10 @@ export default {
         self.cursor.x = event.clientX;
         self.cursor.y = event.clientY;
       });
+
+      window.onbeforeunload = function(event) {
+        window.scrollTo(0, 0);
+      };
     },
     createScene: function() {
       this.sceneGL = new THREE.Scene();
@@ -436,13 +441,15 @@ export default {
       this.videos3D.forEach((vid3D) => {
         let volume = 0;
         vid3D.objects.forEach((obj) => {
-          const squareDist = obj.getWorldPosition(new THREE.Vector3()).distanceToSquared(this.cameraAnimationPath.getPointAt(this.cameraTween.val + 0.005));
-          const newVolume = (1/(squareDist)) * 0.15
-          if(newVolume > volume){
-            volume = newVolume
+          const squareDist = obj
+            .getWorldPosition(new THREE.Vector3())
+            .distanceToSquared(this.cameraAnimationPath.getPointAt(this.cameraTween.val + 0.005));
+          const newVolume = (1 / squareDist) * 0.15;
+          if (newVolume > volume) {
+            volume = newVolume;
           }
         });
-        vid3D.video.volume =  this.limit(volume, 0,1)
+        vid3D.video.volume = this.limit(volume, 0, 1);
       });
 
       // const up = new Vector3(0,0,1)
@@ -480,9 +487,9 @@ export default {
     deg2rad(deg) {
       return deg * (Math.PI / 180);
     },
-    limit(val, min, max){
-      return val < min ? min : (val > max ? max : val);
-    }
+    limit(val, min, max) {
+      return val < min ? min : val > max ? max : val;
+    },
   },
   created() {
     // Shuffle
