@@ -444,7 +444,7 @@ export default {
           const squareDist = obj
             .getWorldPosition(new THREE.Vector3())
             .distanceToSquared(this.cameraAnimationPath.getPointAt(this.cameraTween.val + 0.008));
-          const newVolume = (1 / squareDist) * 0.15;
+          const newVolume = (1 / squareDist) * 0.18;
           if (newVolume > volume) {
             volume = newVolume;
           }
